@@ -52,10 +52,10 @@ cd omnixy
 
 ```bash
 # On existing NixOS system
-sudo nixos-rebuild switch --flake github:yourusername/omarchy-nixos#omarchy
+sudo nixos-rebuild switch --flake github:thearctesian/omnixy#omnixy
 
 # Or locally after cloning
-sudo nixos-rebuild switch --flake .#omarchy
+sudo nixos-rebuild switch --flake .#omnixy
 ```
 
 ## 🎮 Usage
