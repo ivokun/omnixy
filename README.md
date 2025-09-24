@@ -32,8 +32,8 @@ curl -fsSL https://raw.githubusercontent.com/thearctesian/omnixy/main/boot.sh | 
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/omarchy-nixos
-cd omarchy-nixos
+git clone https://github.com/thearctesian/omnixy
+cd omnixy
 ```
 
 2. Run the interactive installer:
