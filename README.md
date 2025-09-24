@@ -1,6 +1,6 @@
-# Omarchy NixOS
+# OmniXY NixOS
 
-Transform your NixOS installation into a fully-configured, beautiful, and modern development system based on Hyprland by running a single command. Omarchy brings the elegance of declarative configuration to desktop Linux, creating a reproducible and version-controlled development environment.
+Transform your NixOS installation into a fully-configured, beautiful, and modern development system based on Hyprland by running a single command. OmniXY brings the elegance of declarative configuration to desktop Linux, creating a reproducible and version-controlled development environment.
 
 ## ✨ Features
 
@@ -63,20 +63,20 @@ sudo nixos-rebuild switch --flake .#omnixy
 ### System Management
 
 ```bash
-omarchy help              # Show all available commands
-omarchy update            # Update system and flake inputs
-omarchy clean             # Clean and optimize Nix store
-omarchy info              # Show system information
-omarchy-rebuild           # Rebuild system configuration
+omnixy help              # Show all available commands
+omnixy update            # Update system and flake inputs
+omnixy clean             # Clean and optimize Nix store
+omnixy info              # Show system information
+omnixy-rebuild           # Rebuild system configuration
 ```
 
 ### Theme Management
 
 ```bash
-omarchy theme             # List available themes
-omarchy theme tokyo-night # Switch to Tokyo Night theme
-omarchy-theme-list        # List all available themes
-omarchy-theme-set catppuccin  # Set Catppuccin theme
+omnixy theme             # List available themes
+omnixy theme tokyo-night # Switch to Tokyo Night theme
+omnixy-theme-list        # List all available themes
+omnixy-theme-set catppuccin  # Set Catppuccin theme
 ```
 
 ### Development Environments
@@ -102,12 +102,12 @@ dev-mongodb               # MongoDB container
 ### Package Management
 
 ```bash
-omarchy search firefox    # Search for packages
+omnixy search firefox    # Search for packages
 nix search nixpkgs python # Alternative package search
 
 # Install packages by editing configuration
 # Add to modules/packages.nix, then:
-omarchy-rebuild           # Apply changes
+omnixy-rebuild           # Apply changes
 ```
 
 ## ⌨️ Key Bindings
@@ -129,7 +129,7 @@ omarchy-rebuild           # Apply changes
 ## 📁 Project Structure
 
 ```
-omarchy-nixos/
+omnixy/
 ├── configuration.nix          # Main NixOS configuration entry point
 ├── flake.nix                  # Flake definition with inputs/outputs
 ├── home.nix                   # Home-manager user configuration
@@ -211,7 +211,7 @@ environment.systemPackages = with pkgs; [
 
 Then rebuild:
 ```bash
-omarchy-rebuild
+omnixy-rebuild
 ```
 
 ### Adding User Packages
@@ -243,7 +243,7 @@ currentTheme = "my-theme";
 
 4. Rebuild to apply:
 ```bash
-omarchy-rebuild
+omnixy-rebuild
 ```
 
 ### Creating Development Environments
@@ -270,11 +270,11 @@ Use with: `nix develop .#myproject`
 
 ```bash
 # Test configuration without switching
-nixos-rebuild build --flake .#omarchy
+nixos-rebuild build --flake .#omnixy
 
 # Test in virtual machine
-nixos-rebuild build-vm --flake .#omarchy
-./result/bin/run-omarchy-vm
+nixos-rebuild build-vm --flake .#omnixy
+./result/bin/run-omnixy-vm
 
 # Check flake evaluation
 nix flake check
@@ -312,7 +312,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Home Manager Manual](https://nix-community.github.io/home-manager/) - User environment management
 - [Hyprland Wiki](https://wiki.hyprland.org/) - Hyprland configuration reference
 - [Nix Package Search](https://search.nixos.org/) - Search available packages
-- [GitHub Issues](https://github.com/yourusername/omarchy-nixos/issues) - Report bugs or request features
+- [GitHub Issues](https://github.com/TheArctesian/omnixy/issues) - Report bugs or request features
 
 ## 📚 Learning Resources
 

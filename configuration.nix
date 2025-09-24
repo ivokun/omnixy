@@ -1,4 +1,4 @@
-# Omarchy NixOS Configuration
+# OmniXY NixOS Configuration
 # This is the main NixOS configuration file
 # Edit this file to define what should be installed on your system
 
@@ -6,7 +6,7 @@
 
 let
   # Import custom modules
-  omarchy = import ./modules { inherit config pkgs lib; };
+  omnixy = import ./modules { inherit config pkgs lib; };
 
   # Current theme - can be changed easily
   currentTheme = "tokyo-night";
@@ -67,7 +67,7 @@ in
     # Plymouth for boot splash
     plymouth = {
       enable = true;
-      theme = "omarchy";
+      theme = "omnixy";
       themePackages = [ (pkgs.callPackage ./packages/plymouth-theme.nix {}) ];
     };
 
@@ -77,7 +77,7 @@ in
 
   # Networking
   networking = {
-    hostName = "omarchy";
+    hostName = "omnixy";
     networkmanager.enable = true;
 
     # Firewall
@@ -143,8 +143,8 @@ in
   # System version
   system.stateVersion = "24.05";
 
-  # Custom Omarchy settings
-  omarchy = {
+  # Custom OmniXY settings
+  omnixy = {
     enable = true;
     theme = currentTheme;
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Omarchy NixOS Bootstrap Script
-# Downloads and installs Omarchy on a fresh NixOS system
+# OmniXY NixOS Bootstrap Script
+# Downloads and installs OmniXY on a fresh NixOS system
 
 set -e
 
@@ -42,7 +42,7 @@ check_nixos() {
 main() {
     show_banner
 
-    echo -e "${BLUE}Welcome to Omarchy NixOS Bootstrap!${NC}"
+    echo -e "${BLUE}Welcome to OmniXY NixOS Bootstrap!${NC}"
     echo
     check_nixos
 
@@ -53,25 +53,25 @@ main() {
     fi
 
     # Use custom repo if specified, otherwise default
-    OMARCHY_REPO="${OMARCHY_REPO:-yourusername/omarchy-nixos}"
-    OMARCHY_REF="${OMARCHY_REF:-main}"
+    OMNIXY_REPO="${OMNIXY_REPO:-TheArctesian/omnixy}"
+    OMNIXY_REF="${OMNIXY_REF:-main}"
 
-    echo -e "${BLUE}Cloning Omarchy from: https://github.com/${OMARCHY_REPO}.git${NC}"
+    echo -e "${BLUE}Cloning OmniXY from: https://github.com/${OMNIXY_REPO}.git${NC}"
 
     # Remove existing directory
-    rm -rf ~/.local/share/omarchy-nixos/
+    rm -rf ~/.local/share/omnixy/
 
     # Clone repository
-    git clone "https://github.com/${OMARCHY_REPO}.git" ~/.local/share/omarchy-nixos
+    git clone "https://github.com/${OMNIXY_REPO}.git" ~/.local/share/omnixy
 
     # Use custom branch if specified
-    if [[ $OMARCHY_REF != "main" ]]; then
-        echo -e "${GREEN}Using branch: $OMARCHY_REF${NC}"
-        cd ~/.local/share/omarchy-nixos
-        git fetch origin "${OMARCHY_REF}" && git checkout "${OMARCHY_REF}"
+    if [[ $OMNIXY_REF != "main" ]]; then
+        echo -e "${GREEN}Using branch: $OMNIXY_REF${NC}"
+        cd ~/.local/share/omnixy
+        git fetch origin "${OMNIXY_REF}" && git checkout "${OMNIXY_REF}"
     fi
 
-    cd ~/.local/share/omarchy-nixos
+    cd ~/.local/share/omnixy
 
     echo -e "${BLUE}Starting installation...${NC}"
     ./install.sh

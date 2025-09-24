@@ -2,35 +2,42 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Notes
+- **Repository**: https://github.com/TheArctesian/omnixy
+- **System Name**: The system uses "omnixy" for flake names and commands
+- **Git Setup**: The installation process requires users to set up their GitHub account manually before initializing the git repository
+
 ## Overview
-This repository contains Omarchy NixOS, a declarative system configuration that transforms NixOS into a beautiful, modern development environment based on Hyprland. Unlike the original Arch-based Omarchy, this version uses Nix's declarative configuration management for reproducible systems.
+This repository contains OmniXY NixOS (https://github.com/TheArctesian/omnixy), a declarative system configuration that transforms NixOS into a beautiful, modern development environment based on Hyprland. This version uses Nix's declarative configuration management for reproducible systems.
 
 ## Key Commands
 
 ### System Management
 ```bash
 # Rebuild system configuration
-sudo nixos-rebuild switch --flake /etc/nixos#omarchy
-omarchy-rebuild  # Convenience wrapper
+sudo nixos-rebuild switch --flake /etc/nixos#omnixy
+omnixy-rebuild  # Convenience wrapper
 
 # Update system and flake inputs
-omarchy update
+omnixy update
 
 # Clean and optimize Nix store
-omarchy clean
+omnixy clean
 
 # Search for packages
-omarchy search <package-name>
+omnixy search <package-name>
 ```
 
 ### Development Workflows
 ```bash
 # Test configuration changes
-nixos-rebuild build --flake .#omarchy  # Build without switching
+nixos-rebuild build --flake .#omnixy  # Build without switching
 
 # Enter development shell
 nix develop  # Uses flake.nix devShell
 nix develop .#python  # Language-specific shell
+nix develop .#node    # Node.js development
+nix develop .#rust    # Rust development
 
 # Format Nix code
 nixpkgs-fmt *.nix
@@ -47,7 +54,7 @@ deadnix .       # Dead code elimination
 ls modules/themes/
 
 # Test theme switch
-omarchy theme tokyo-night
+omnixy theme tokyo-night
 
 # Create new theme
 cp modules/themes/tokyo-night.nix modules/themes/my-theme.nix
@@ -95,7 +102,7 @@ The configuration is split into focused modules:
 1. **System packages**: Add to `modules/packages.nix` in appropriate category
 2. **User packages**: Add to `home.nix` home.packages
 3. **Development only**: Add to devShell in flake.nix
-4. Always rebuild/test: `nixos-rebuild build --flake .#omarchy`
+4. Always rebuild/test: `nixos-rebuild build --flake .#omnixy`
 
 ### Creating Modules
 1. Follow NixOS module structure with options and config sections
@@ -122,8 +129,8 @@ The configuration is split into focused modules:
 - Export packages and apps for external consumption
 
 ### Testing Changes
-- Build configuration: `nixos-rebuild build --flake .#omarchy`
-- Test in VM: `nixos-rebuild build-vm --flake .#omarchy`
+- Build configuration: `nixos-rebuild build --flake .#omnixy`
+- Test in VM: `nixos-rebuild build-vm --flake .#omnixy`
 - Check evaluation: `nix flake check`
 - Format code: `nixpkgs-fmt .`
 

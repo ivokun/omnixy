@@ -3,7 +3,7 @@
 with lib;
 
 let
-  cfg = config.omarchy.features.development;
+  cfg = config.omnixy.features.development;
 in
 {
   config = mkIf cfg {

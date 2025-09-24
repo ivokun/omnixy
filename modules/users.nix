@@ -3,13 +3,13 @@
 with lib;
 
 let
-  cfg = config.omarchy;
+  cfg = config.omnixy;
 in
 {
   # User account configuration
   users.users.${cfg.user} = {
     isNormalUser = true;
-    description = "Omarchy User";
+    description = "OmniXY User";
     extraGroups = [
       "wheel"
       "networkmanager"
@@ -23,7 +23,7 @@ in
     shell = pkgs.bash;
 
     # Set initial password (should be changed on first login)
-    initialPassword = "omarchy";
+    initialPassword = "omnixy";
 
     # SSH keys (add your SSH public keys here)
     openssh.authorizedKeys.keys = [

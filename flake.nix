@@ -1,5 +1,5 @@
 {
-  description = "Omarchy - NixOS configuration for modern development";
+  description = "OmniXY - NixOS configuration for modern development";
 
   inputs = {
     # Nixpkgs
@@ -61,7 +61,7 @@
     {
       # NixOS configuration
       nixosConfigurations = {
-        omarchy = nixpkgs.lib.nixosSystem {
+        omnixy = nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = { inherit inputs; };
           modules = [
@@ -116,18 +116,18 @@
           ];
 
           shellHook = ''
-            echo "🚀 Welcome to Omarchy development environment!"
+            echo "🚀 Welcome to OmniXY development environment!"
             echo ""
             echo "Available commands:"
-            echo "  omarchy-rebuild  - Rebuild system configuration"
-            echo "  omarchy-update   - Update flake inputs"
-            echo "  omarchy-clean    - Garbage collect nix store"
+            echo "  omnixy-rebuild  - Rebuild system configuration"
+            echo "  omnixy-update   - Update flake inputs"
+            echo "  omnixy-clean    - Garbage collect nix store"
             echo ""
 
             # Setup aliases
-            alias omarchy-rebuild="sudo nixos-rebuild switch --flake .#omarchy"
-            alias omarchy-update="nix flake update"
-            alias omarchy-clean="nix-collect-garbage -d"
+            alias omnixy-rebuild="sudo nixos-rebuild switch --flake .#omnixy"
+            alias omnixy-update="nix flake update"
+            alias omnixy-clean="nix-collect-garbage -d"
 
             # Initialize starship prompt
             eval "$(starship init bash)"
@@ -175,11 +175,11 @@
 
       # Packages that can be built
       packages.${system} = {
-        # Omarchy scripts as packages
-        omarchy-scripts = pkgs.callPackage ./packages/scripts.nix {};
+        # OmniXY scripts as packages
+        omnixy-scripts = pkgs.callPackage ./packages/scripts.nix {};
 
         # Plymouth theme
-        plymouth-theme-omarchy = pkgs.callPackage ./packages/plymouth-theme.nix {};
+        plymouth-theme-omnixy = pkgs.callPackage ./packages/plymouth-theme.nix {};
       };
 
       # Apps that can be run
@@ -187,12 +187,12 @@
         # Installer
         installer = {
           type = "app";
-          program = "${pkgs.writeShellScriptBin "omarchy-install" ''
+          program = "${pkgs.writeShellScriptBin "omnixy-install" ''
             #!/usr/bin/env bash
             set -e
 
-            echo "🚀 Omarchy NixOS Installer"
-            echo "========================="
+            echo "🚀 OmniXY NixOS Installer"
+            echo "========================"
             echo ""
 
             # Check if running on NixOS
@@ -201,7 +201,7 @@
               exit 1
             fi
 
-            echo "This will install Omarchy configuration to your NixOS system."
+            echo "This will install OmniXY configuration to your NixOS system."
             read -p "Continue? (y/n) " -n 1 -r
             echo
 
@@ -214,7 +214,7 @@
             sudo cp -r /etc/nixos /etc/nixos.backup.$(date +%Y%m%d-%H%M%S)
 
             # Copy new configuration
-            echo "📝 Installing Omarchy configuration..."
+            echo "📝 Installing OmniXY configuration..."
             sudo cp -r ${self}/* /etc/nixos/
 
             # Initialize flake
@@ -225,12 +225,12 @@
 
             # Rebuild
             echo "🏗️  Rebuilding system..."
-            sudo nixos-rebuild switch --flake /etc/nixos#omarchy
+            sudo nixos-rebuild switch --flake /etc/nixos#omnixy
 
             echo ""
             echo "✅ Installation complete!"
-            echo "🎉 Welcome to Omarchy!"
-          ''}/bin/omarchy-install";
+            echo "🎉 Welcome to OmniXY!"
+          ''}/bin/omnixy-install";
         };
       };
     };

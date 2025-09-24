@@ -1,8 +1,8 @@
 { pkgs, lib, ... }:
 
-# Omarchy utility scripts as a Nix package
+# OmniXY utility scripts as a Nix package
 pkgs.stdenv.mkDerivation rec {
-  pname = "omarchy-scripts";
+  pname = "omnixy-scripts";
   version = "1.0.0";
 
   # No source needed for script-only package
@@ -26,7 +26,7 @@ pkgs.stdenv.mkDerivation rec {
     mkdir -p $out/bin
 
     # Theme management
-    cat > $out/bin/omarchy-theme-set << 'EOF'
+    cat > $out/bin/omnixy-theme-set << 'EOF'
     #!/usr/bin/env bash
     set -e
 
@@ -34,7 +34,7 @@ pkgs.stdenv.mkDerivation rec {
     AVAILABLE_THEMES="tokyo-night catppuccin gruvbox nord everforest rose-pine kanagawa"
 
     if [ -z "$THEME" ]; then
-      echo "Usage: omarchy-theme-set <theme>"
+      echo "Usage: omnixy-theme-set <theme>"
       echo "Available themes: $AVAILABLE_THEMES"
       exit 1
     fi
@@ -51,15 +51,15 @@ pkgs.stdenv.mkDerivation rec {
     sudo sed -i "s/currentTheme = \".*\"/currentTheme = \"$THEME\"/" /etc/nixos/configuration.nix
 
     # Rebuild system
-    sudo nixos-rebuild switch --flake /etc/nixos#omarchy
+    sudo nixos-rebuild switch --flake /etc/nixos#omnixy
 
     echo "Theme switched to $THEME successfully!"
     EOF
-    chmod +x $out/bin/omarchy-theme-set
+    chmod +x $out/bin/omnixy-theme-set
 
-    cat > $out/bin/omarchy-theme-list << 'EOF'
+    cat > $out/bin/omnixy-theme-list << 'EOF'
     #!/usr/bin/env bash
-    echo "Available Omarchy themes:"
+    echo "Available OmniXY themes:"
     echo "========================"
     echo "  • tokyo-night (default)"
     echo "  • catppuccin"
@@ -71,16 +71,16 @@ pkgs.stdenv.mkDerivation rec {
     echo ""
     echo "Current theme: $(grep currentTheme /etc/nixos/configuration.nix | cut -d'"' -f2)"
     echo ""
-    echo "To change theme, run: omarchy-theme-set <theme-name>"
+    echo "To change theme, run: omnixy-theme-set <theme-name>"
     EOF
-    chmod +x $out/bin/omarchy-theme-list
+    chmod +x $out/bin/omnixy-theme-list
 
     # System management
-    cat > $out/bin/omarchy-update << 'EOF'
+    cat > $out/bin/omnixy-update << 'EOF'
     #!/usr/bin/env bash
     set -e
 
-    echo "🔄 Updating Omarchy system..."
+    echo "🔄 Updating OmniXY system..."
     echo ""
 
     # Update flake inputs
@@ -96,18 +96,18 @@ pkgs.stdenv.mkDerivation rec {
     # Rebuild system
     echo ""
     echo "🏗️  Rebuilding system..."
-    sudo nixos-rebuild switch --flake .#omarchy
+    sudo nixos-rebuild switch --flake .#omnixy
 
     echo ""
     echo "✅ System updated successfully!"
     EOF
-    chmod +x $out/bin/omarchy-update
+    chmod +x $out/bin/omnixy-update
 
-    cat > $out/bin/omarchy-clean << 'EOF'
+    cat > $out/bin/omnixy-clean << 'EOF'
     #!/usr/bin/env bash
     set -e
 
-    echo "🧹 Cleaning Omarchy system..."
+    echo "🧹 Cleaning OmniXY system..."
     echo ""
 
     # Show current store size
@@ -131,32 +131,32 @@ pkgs.stdenv.mkDerivation rec {
     echo ""
     echo "✅ Cleanup complete!"
     EOF
-    chmod +x $out/bin/omarchy-clean
+    chmod +x $out/bin/omnixy-clean
 
     # Package management
-    cat > $out/bin/omarchy-search << 'EOF'
+    cat > $out/bin/omnixy-search << 'EOF'
     #!/usr/bin/env bash
 
     QUERY="$1"
 
     if [ -z "$QUERY" ]; then
-      echo "Usage: omarchy-search <package-name>"
+      echo "Usage: omnixy-search <package-name>"
       exit 1
     fi
 
     echo "Searching for '$QUERY'..."
     nix search nixpkgs "$QUERY" 2>/dev/null | head -50
     EOF
-    chmod +x $out/bin/omarchy-search
+    chmod +x $out/bin/omnixy-search
 
-    cat > $out/bin/omarchy-install << 'EOF'
+    cat > $out/bin/omnixy-install << 'EOF'
     #!/usr/bin/env bash
     set -e
 
     PACKAGES="$*"
 
     if [ -z "$PACKAGES" ]; then
-      echo "Usage: omarchy-install <package-name> [package-name...]"
+      echo "Usage: omnixy-install <package-name> [package-name...]"
       exit 1
     fi
 
@@ -174,12 +174,12 @@ pkgs.stdenv.mkDerivation rec {
 
     echo ""
     echo "Please edit $CONFIG and add the packages to environment.systemPackages"
-    echo "Then run: omarchy-rebuild"
+    echo "Then run: omnixy-rebuild"
     EOF
-    chmod +x $out/bin/omarchy-install
+    chmod +x $out/bin/omnixy-install
 
     # Development helpers
-    cat > $out/bin/omarchy-dev-shell << 'EOF'
+    cat > $out/bin/omnixy-dev-shell << 'EOF'
     #!/usr/bin/env bash
 
     LANG="$1"
@@ -206,16 +206,16 @@ pkgs.stdenv.mkDerivation rec {
         nix-shell -p gcc cmake gnumake gdb clang-tools
         ;;
       *)
-        echo "Usage: omarchy-dev-shell <language>"
+        echo "Usage: omnixy-dev-shell <language>"
         echo "Supported languages: rust, go, python, node/js, c/cpp"
         exit 1
         ;;
     esac
     EOF
-    chmod +x $out/bin/omarchy-dev-shell
+    chmod +x $out/bin/omnixy-dev-shell
 
     # Screenshot utility
-    cat > $out/bin/omarchy-screenshot << 'EOF'
+    cat > $out/bin/omnixy-screenshot << 'EOF'
     #!/usr/bin/env bash
 
     MODE="''${1:-region}"
@@ -234,7 +234,7 @@ pkgs.stdenv.mkDerivation rec {
         grim -g "$(hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')" "$FILENAME"
         ;;
       *)
-        echo "Usage: omarchy-screenshot [region|full|window]"
+        echo "Usage: omnixy-screenshot [region|full|window]"
         exit 1
         ;;
     esac
@@ -245,14 +245,14 @@ pkgs.stdenv.mkDerivation rec {
       echo "$FILENAME"
     fi
     EOF
-    chmod +x $out/bin/omarchy-screenshot
+    chmod +x $out/bin/omnixy-screenshot
 
     # System info
-    cat > $out/bin/omarchy-info << 'EOF'
+    cat > $out/bin/omnixy-info << 'EOF'
     #!/usr/bin/env bash
 
     echo "╭──────────────────────────────╮"
-    echo "│       OMARCHY NIXOS          │"
+    echo "│       OMNIXY NIXOS           │"
     echo "╰──────────────────────────────╯"
     echo ""
     echo "System Information:"
@@ -272,41 +272,41 @@ pkgs.stdenv.mkDerivation rec {
     echo ""
     echo "Quick Commands:"
     echo "=============="
-    echo "  omarchy-help     - Show help"
-    echo "  omarchy-update   - Update system"
-    echo "  omarchy-clean    - Clean system"
-    echo "  omarchy-theme    - Change theme"
+    echo "  omnixy-help     - Show help"
+    echo "  omnixy-update   - Update system"
+    echo "  omnixy-clean    - Clean system"
+    echo "  omnixy-theme    - Change theme"
     EOF
-    chmod +x $out/bin/omarchy-info
+    chmod +x $out/bin/omnixy-info
 
     # Help command
-    cat > $out/bin/omarchy-help << 'EOF'
+    cat > $out/bin/omnixy-help << 'EOF'
     #!/usr/bin/env bash
 
     cat << HELP
-    Omarchy NixOS - Command Reference
-    ==================================
+    OmniXY NixOS - Command Reference
+    ================================
 
     System Management:
     ------------------
-    omarchy-update        Update system and flake inputs
-    omarchy-clean         Clean and optimize Nix store
-    omarchy-rebuild       Rebuild system configuration
-    omarchy-info          Show system information
+    omnixy-update        Update system and flake inputs
+    omnixy-clean         Clean and optimize Nix store
+    omnixy-rebuild       Rebuild system configuration
+    omnixy-info          Show system information
 
     Package Management:
     -------------------
-    omarchy-search        Search for packages
-    omarchy-install       Install packages (guide)
+    omnixy-search        Search for packages
+    omnixy-install       Install packages (guide)
 
     Theme Management:
     -----------------
-    omarchy-theme-list    List available themes
-    omarchy-theme-set     Set system theme
+    omnixy-theme-list    List available themes
+    omnixy-theme-set     Set system theme
 
     Development:
     ------------
-    omarchy-dev-shell     Start language-specific shell
+    omnixy-dev-shell     Start language-specific shell
     dev-postgres          Start PostgreSQL container
     dev-redis             Start Redis container
     dev-mysql             Start MySQL container
@@ -314,7 +314,7 @@ pkgs.stdenv.mkDerivation rec {
 
     Utilities:
     ----------
-    omarchy-screenshot    Take screenshots
+    omnixy-screenshot    Take screenshots
 
     Hyprland Keybindings:
     ---------------------
@@ -330,13 +330,13 @@ pkgs.stdenv.mkDerivation rec {
     Print                 Screenshot region
     Shift + Print         Screenshot full
 
-    For more information: https://omarchy.org
+    For more information: https://github.com/TheArctesian/omnixy
     HELP
     EOF
-    chmod +x $out/bin/omarchy-help
+    chmod +x $out/bin/omnixy-help
 
-    # Main omarchy command
-    cat > $out/bin/omarchy << 'EOF'
+    # Main omnixy command
+    cat > $out/bin/omnixy << 'EOF'
     #!/usr/bin/env bash
 
     CMD="''${1:-help}"
@@ -344,49 +344,49 @@ pkgs.stdenv.mkDerivation rec {
 
     case "$CMD" in
       update|upgrade)
-        omarchy-update "$@"
+        omnixy-update "$@"
         ;;
       clean|gc)
-        omarchy-clean "$@"
+        omnixy-clean "$@"
         ;;
       theme)
         if [ -n "$1" ]; then
-          omarchy-theme-set "$@"
+          omnixy-theme-set "$@"
         else
-          omarchy-theme-list
+          omnixy-theme-list
         fi
         ;;
       search)
-        omarchy-search "$@"
+        omnixy-search "$@"
         ;;
       install)
-        omarchy-install "$@"
+        omnixy-install "$@"
         ;;
       info|status)
-        omarchy-info "$@"
+        omnixy-info "$@"
         ;;
       help|--help|-h)
-        omarchy-help "$@"
+        omnixy-help "$@"
         ;;
       *)
         echo "Unknown command: $CMD"
-        echo "Run 'omarchy help' for available commands"
+        echo "Run 'omnixy help' for available commands"
         exit 1
         ;;
     esac
     EOF
-    chmod +x $out/bin/omarchy
+    chmod +x $out/bin/omnixy
 
     # Create rebuild alias
-    cat > $out/bin/omarchy-rebuild << 'EOF'
+    cat > $out/bin/omnixy-rebuild << 'EOF'
     #!/usr/bin/env bash
-    sudo nixos-rebuild switch --flake /etc/nixos#omarchy "$@"
+    sudo nixos-rebuild switch --flake /etc/nixos#omnixy "$@"
     EOF
-    chmod +x $out/bin/omarchy-rebuild
+    chmod +x $out/bin/omnixy-rebuild
   '';
 
   meta = with lib; {
-    description = "Omarchy utility scripts for NixOS";
+    description = "OmniXY utility scripts for NixOS";
     license = licenses.mit;
     platforms = platforms.linux;
   };

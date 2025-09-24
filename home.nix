@@ -145,13 +145,13 @@
       find = "fd";
 
       # NixOS specific
-      rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#omarchy";
+      rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#omnixy";
       update = "nix flake update";
       clean = "nix-collect-garbage -d";
 
-      # Omarchy specific
-      omarchy-theme = "omarchy-theme-set";
-      omarchy-update = "omarchy-update";
+      # OmniXY specific
+      omnixy-theme = "omnixy-theme-set";
+      omnixy-update = "omnixy-update";
     };
 
     initExtra = ''
@@ -260,7 +260,7 @@
 
     profiles.default = {
       settings = {
-        "browser.startup.homepage" = "https://omarchy.org";
+        "browser.startup.homepage" = "https://github.com/TheArctesian/omnixy";
         "privacy.donottrackheader.enabled" = true;
         "privacy.trackingprotection.enabled" = true;
         "privacy.trackingprotection.socialtracking.enabled" = true;

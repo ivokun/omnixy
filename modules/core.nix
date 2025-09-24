@@ -3,11 +3,11 @@
 with lib;
 
 let
-  cfg = config.omarchy;
+  cfg = config.omnixy;
 in
 {
-  options.omarchy = {
-    enable = mkEnableOption "Omarchy system configuration";
+  options.omnixy = {
+    enable = mkEnableOption "OmniXY system configuration";
 
     user = mkOption {
       type = types.str;
@@ -33,7 +33,7 @@ in
     # Basic system configuration
     system.autoUpgrade = {
       enable = true;
-      flake = "/etc/nixos#omarchy";
+      flake = "/etc/nixos#omnixy";
       flags = [ "--update-input" "nixpkgs" "--commit-lock-file" ];
       dates = "weekly";
     };
@@ -178,15 +178,15 @@ in
       GOPATH = "$HOME/go";
       NPM_CONFIG_PREFIX = "$HOME/.npm";
 
-      # Omarchy specific
-      OMARCHY_ROOT = "/etc/nixos";
-      OMARCHY_VERSION = "1.0.0";
+      # OmniXY specific
+      OMNIXY_ROOT = "/etc/nixos";
+      OMNIXY_VERSION = "1.0.0";
     };
 
     # Shell configuration
     programs.bash = {
       interactiveShellInit = ''
-        # Omarchy bash initialization
+        # OmniXY bash initialization
         export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$HOME/go/bin:$HOME/.npm/bin:$PATH"
 
         # Aliases
@@ -198,14 +198,14 @@ in
         alias vim='nvim'
         alias vi='nvim'
 
-        # Omarchy specific aliases
-        alias omarchy-rebuild='sudo nixos-rebuild switch --flake /etc/nixos#omarchy'
-        alias omarchy-update='nix flake update --flake /etc/nixos'
-        alias omarchy-clean='sudo nix-collect-garbage -d'
-        alias omarchy-search='nix search nixpkgs'
+        # OmniXY specific aliases
+        alias omnixy-rebuild='sudo nixos-rebuild switch --flake /etc/nixos#omnixy'
+        alias omnixy-update='nix flake update --flake /etc/nixos'
+        alias omnixy-clean='sudo nix-collect-garbage -d'
+        alias omnixy-search='nix search nixpkgs'
 
         # Functions
-        omarchy-theme() {
+        omnixy-theme() {
           local theme=$1
           if [ -z "$theme" ]; then
             echo "Available themes: tokyo-night, catppuccin, gruvbox, nord, everforest, rose-pine, kanagawa"
@@ -215,19 +215,19 @@ in
           echo "Switching to theme: $theme"
           # This would need to update the configuration and rebuild
           sudo sed -i "s/currentTheme = \".*\"/currentTheme = \"$theme\"/" /etc/nixos/configuration.nix
-          omarchy-rebuild
+          omnixy-rebuild
         }
 
-        omarchy-help() {
+        omnixy-help() {
           cat << EOF
-        Omarchy Commands:
-        ================
-        omarchy-rebuild  - Rebuild system configuration
-        omarchy-update   - Update flake inputs
-        omarchy-clean    - Garbage collect nix store
-        omarchy-search   - Search for packages
-        omarchy-theme    - Change system theme
-        omarchy-help     - Show this help message
+        OmniXY Commands:
+        ===============
+        omnixy-rebuild  - Rebuild system configuration
+        omnixy-update   - Update flake inputs
+        omnixy-clean    - Garbage collect nix store
+        omnixy-search   - Search for packages
+        omnixy-theme    - Change system theme
+        omnixy-help     - Show this help message
 
         Key Bindings (Hyprland):
         =======================
@@ -239,13 +239,13 @@ in
         Super + F        - Fullscreen
         Super + Space    - Toggle floating
 
-        For more information, visit: https://omarchy.org
+        For more information, visit: https://github.com/TheArctesian/omnixy
         EOF
         }
 
         # Welcome message
         if [ -z "$IN_NIX_SHELL" ]; then
-          echo "Welcome to Omarchy! Type 'omarchy-help' for available commands."
+          echo "Welcome to OmniXY! Type 'omnixy-help' for available commands."
         fi
       '';
 
@@ -287,12 +287,12 @@ in
       nixpkgs-fmt
       nil
 
-      # Custom Omarchy scripts
-      (writeShellScriptBin "omarchy-info" ''
+      # Custom OmniXY scripts
+      (writeShellScriptBin "omnixy-info" ''
         #!/usr/bin/env bash
-        echo "Omarchy NixOS"
-        echo "============="
-        echo "Version: ${config.omarchy.version or "1.0.0"}"
+        echo "OmniXY NixOS"
+        echo "============"
+        echo "Version: ${config.omnixy.version or "1.0.0"}"
         echo "Theme: ${cfg.theme}"
         echo "User: ${cfg.user}"
         echo ""

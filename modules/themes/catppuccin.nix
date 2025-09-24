@@ -5,14 +5,14 @@
   config = {
     # Color palette
     environment.variables = {
-      OMARCHY_THEME = "catppuccin";
-      OMARCHY_THEME_BG = "#1e1e2e";
-      OMARCHY_THEME_FG = "#cdd6f4";
-      OMARCHY_THEME_ACCENT = "#cba6f7";
+      OMNIXY_THEME = "catppuccin";
+      OMNIXY_THEME_BG = "#1e1e2e";
+      OMNIXY_THEME_FG = "#cdd6f4";
+      OMNIXY_THEME_ACCENT = "#cba6f7";
     };
 
     # Home-manager theme configuration
-    home-manager.users.${config.omarchy.user or "user"} = {
+    home-manager.users.${config.omnixy.user or "user"} = {
       # Alacritty theme
       programs.alacritty.settings.colors = {
         primary = {

@@ -3,11 +3,11 @@
 with lib;
 
 let
-  cfg = config.omarchy.desktop;
+  cfg = config.omnixy.desktop;
 in
 {
-  options.omarchy.desktop = {
-    enable = mkEnableOption "Omarchy Hyprland desktop environment";
+  options.omnixy.desktop = {
+    enable = mkEnableOption "OmniXY Hyprland desktop environment";
 
     monitors = mkOption {
       type = types.listOf types.str;
@@ -139,10 +139,10 @@ in
 
     # Create Hyprland config directory structure
     system.activationScripts.hyprlandConfig = ''
-      mkdir -p /etc/omarchy/hyprland
+      mkdir -p /etc/omnixy/hyprland
 
       # Main Hyprland configuration
-      cat > /etc/omarchy/hyprland/hyprland.conf <<'EOF'
+      cat > /etc/omnixy/hyprland/hyprland.conf <<'EOF'
       # Omarchy Hyprland Configuration
       # See https://wiki.hyprland.org/Configuring/
 
@@ -387,7 +387,7 @@ in
     '';
 
     # Waybar configuration
-    home-manager.users.${config.omarchy.user or "user"} = {
+    home-manager.users.${config.omnixy.user or "user"} = {
       programs.waybar = {
         enable = true;
         systemd.enable = true;

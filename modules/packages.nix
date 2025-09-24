@@ -3,11 +3,11 @@
 with lib;
 
 let
-  cfg = config.omarchy;
+  cfg = config.omnixy;
 in
 {
-  options.omarchy.packages = {
-    enable = mkEnableOption "Omarchy packages";
+  options.omnixy.packages = {
+    enable = mkEnableOption "OmniXY packages";
 
     categories = {
       base = mkEnableOption "Base system packages" // { default = true; };

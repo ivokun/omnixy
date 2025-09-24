@@ -3,7 +3,7 @@
 with lib;
 
 let
-  cfg = config.omarchy;
+  cfg = config.omnixy;
 in
 {
   # System services configuration
@@ -218,7 +218,7 @@ in
     #   enable = true;
     #   allowReboot = false;
     #   dates = "04:00";
-    #   flake = "/etc/nixos#omarchy";
+    #   flake = "/etc/nixos#omnixy";
     # };
 
     # Earlyoom - out of memory killer
@@ -232,7 +232,7 @@ in
     logrotate = {
       enable = true;
       settings = {
-        "/var/log/omarchy/*.log" = {
+        "/var/log/omnixy/*.log" = {
           frequency = "weekly";
           rotate = 4;
           compress = true;
@@ -270,25 +270,25 @@ in
     };
 
     # Custom Omarchy services
-    services.omarchy-init = {
+    services.omnixy-init = {
       description = "Omarchy initialization service";
       wantedBy = [ "multi-user.target" ];
       after = [ "network.target" ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        ExecStart = pkgs.writeShellScript "omarchy-init" ''
+        ExecStart = pkgs.writeShellScript "omnixy-init" ''
           #!/usr/bin/env bash
           echo "Initializing Omarchy..."
 
           # Create necessary directories
-          mkdir -p /var/log/omarchy
-          mkdir -p /var/lib/omarchy
-          mkdir -p /etc/omarchy
+          mkdir -p /var/log/omnixy
+          mkdir -p /var/lib/omnixy
+          mkdir -p /etc/omnixy
 
           # Set up initial configuration
-          if [ ! -f /etc/omarchy/initialized ]; then
-            echo "$(date): Omarchy initialized" > /etc/omarchy/initialized
+          if [ ! -f /etc/omnixy/initialized ]; then
+            echo "$(date): OmniXY initialized" > /etc/omnixy/initialized
             echo "Welcome to Omarchy!" > /etc/motd
           fi
         '';

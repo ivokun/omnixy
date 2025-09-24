@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Omarchy NixOS Installation Script
-# This script helps install Omarchy on an existing NixOS system
+# OmniXY NixOS Installation Script
+# This script helps install OmniXY on an existing NixOS system
 
 set -e
 
@@ -17,15 +17,14 @@ show_banner() {
     echo -e "${BLUE}"
     cat << 'EOF'
      ▄▄▄
- ▄█████▄    ▄███████████▄    ▄███████   ▄███████   ▄███████   ▄█   █▄    ▄█   █▄
-███   ███  ███   ███   ███  ███   ███  ███   ███  ███   ███  ███   ███  ███   ███
-███   ███  ███   ███   ███  ███   ███  ███   ███  ███   █▀   ███   ███  ███   ███
-███   ███  ███   ███   ███ ▄███▄▄▄███ ▄███▄▄▄██▀  ███       ▄███▄▄▄███▄ ███▄▄▄███
-███   ███  ███   ███   ███ ▀███▀▀▀███ ▀███▀▀▀▀    ███      ▀▀███▀▀▀███  ▀▀▀▀▀▀███
-███   ███  ███   ███   ███  ███   ███ ██████████  ███   █▄   ███   ███  ▄██   ███
-███   ███  ███   ███   ███  ███   ███  ███   ███  ███   ███  ███   ███  ███   ███
- ▀█████▀    ▀█   ███   █▀   ███   █▀   ███   ███  ███████▀   ███   █▀    ▀█████▀
-                                       ███   █▀
+ ▄█████▄     ▄████▄    ██▄   ▄██  ██▄  ▄██  ▄██   ▄██    ▄█  ▄█   █▄    ▄█   █▄
+███   ███   ███  ███   ███▄ ▄███  ███  ███  ███   ███   ███ ███   ███  ███   ███
+███   ███  ███    ███  ████▀████  ███▄▄███  ███▄  ███   ███ ███   ███  ███   ███
+███   ███  ███    ███  ███   ███  ████████  █████████   ███ ▄███▄▄▄███▄ ███▄▄▄███
+███   ███  ███    ███  ███   ███  ███  ███  ███ █████   ███ ▀▀███▀▀▀███  ▀▀▀▀▀▀███
+███   ███  ███    ███  ███   ███  ███  ███  ███  ████   ███  ███   ███  ▄██   ███
+███   ███   ███  ███   ███   ███  ███  ███  ███   ███   ███  ███   ███  ███   ███
+ ▀█████▀     ▀████▀    ███   ███  ███  ███  ███   ███    ▀█  ███   █▀    ▀█████▀
 
                             NixOS Edition
 EOF
@@ -156,19 +155,19 @@ generate_hardware_config() {
 }
 
 # Initialize git repository
-init_git() {
-    echo -e "${BLUE}📚 Initializing git repository...${NC}"
-
-    cd /etc/nixos
-
-    if [ ! -d .git ]; then
-        sudo git init
-        sudo git add .
-        sudo git commit -m "Initial Omarchy configuration"
-    fi
-
-    echo -e "${GREEN}✓ Git repository initialized${NC}"
-}
+# init_git() {
+#     echo -e "${BLUE}📚 Initializing git repository...${NC}"
+# 
+#     cd /etc/nixos
+# 
+#     if [ ! -d .git ]; then
+#         sudo git init
+#         sudo git add .
+#         sudo git commit -m "Initial Omarchy configuration"
+#     fi
+# 
+#     echo -e "${GREEN}✓ Git repository initialized${NC}"
+# }
 
 # Build and switch to new configuration
 build_system() {
@@ -176,7 +175,7 @@ build_system() {
     echo "This may take a while on first run..."
 
     # Build the system
-    sudo nixos-rebuild switch --flake /etc/nixos#omarchy
+    sudo nixos-rebuild switch --flake /etc/nixos#omnixy
 
     echo -e "${GREEN}✓ System built successfully!${NC}"
 }
@@ -189,9 +188,9 @@ show_complete() {
     echo -e "${GREEN}╰──────────────────────────────────────────╯${NC}"
     echo
     echo -e "${BLUE}Quick Start Guide:${NC}"
-    echo "  • Run 'omarchy help' for available commands"
-    echo "  • Run 'omarchy-theme-list' to see available themes"
-    echo "  • Run 'omarchy update' to update your system"
+    echo "  • Run 'omnixy help' for available commands"
+    echo "  • Run 'omnixy-theme-list' to see available themes"
+    echo "  • Run 'omnixy update' to update your system"
     echo
     echo -e "${BLUE}Key Bindings (Hyprland):${NC}"
     echo "  • Super + Return: Open terminal"
@@ -201,7 +200,7 @@ show_complete() {
     echo
     echo -e "${YELLOW}Note: You may need to reboot for all changes to take effect.${NC}"
     echo
-    echo "For more information, visit: https://omarchy.org"
+    echo "For more information, visit: https://github.com/TheArctesian/omnixy"
 }
 
 # Main installation flow
@@ -240,7 +239,7 @@ main() {
         show_complete
     else
         echo -e "${YELLOW}Installation paused. To complete, run:${NC}"
-        echo "  sudo nixos-rebuild switch --flake /etc/nixos#omarchy"
+        echo "  sudo nixos-rebuild switch --flake /etc/nixos#omnixy"
     fi
 }
 
