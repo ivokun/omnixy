@@ -25,7 +25,7 @@ Transform your NixOS installation into a fully-configured, beautiful, and modern
 ### Quick Install (Bootstrap on fresh NixOS)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yourusername/omarchy-nixos/main/boot.sh | bash
+curl -fsSL https://raw.githubusercontent.com/thearctesian/omnixy/main/boot.sh | bash
 ```
 
 ### Manual Installation
