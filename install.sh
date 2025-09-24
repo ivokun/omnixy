@@ -227,7 +227,7 @@ main() {
     update_user
     select_theme
     configure_features
-    init_git
+    # init_git
 
     echo
     echo -e "${YELLOW}Ready to build the system. This may take 10-30 minutes.${NC}"
