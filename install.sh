@@ -9,55 +9,44 @@ set -e
 TERM_WIDTH=$(tput cols 2>/dev/null || echo 80)
 TERM_HEIGHT=$(tput lines 2>/dev/null || echo 24)
 
-# Tokyo Night Color Palette
-BG='\033[48;2;26;27;38m'        # #1a1b26
-FG='\033[38;2;192;202;245m'     # #c0caf5
-BLUE='\033[38;2;122;162;247m'   # #7aa2f7
-CYAN='\033[38;2;125;207;255m'   # #7dcfff
-GREEN='\033[38;2;158;206;106m'  # #9ece6a
-YELLOW='\033[38;2;224;175;104m' # #e0af68
-RED='\033[38;2;247;118;142m'    # #f7768e
-PURPLE='\033[38;2;187;154;247m' # #bb9af7
-ORANGE='\033[38;2;255;158;100m' # #ff9e64
-DARK_BLUE='\033[38;2;65;72;104m' # #414868
+# Tokyo Night Color Palette (using printf for better compatibility)
+setup_colors() {
+    BG=$(printf '\033[48;2;26;27;38m')        # #1a1b26
+    FG=$(printf '\033[38;2;192;202;245m')     # #c0caf5
+    BLUE=$(printf '\033[38;2;122;162;247m')   # #7aa2f7
+    CYAN=$(printf '\033[38;2;125;207;255m')   # #7dcfff
+    GREEN=$(printf '\033[38;2;158;206;106m')  # #9ece6a
+    YELLOW=$(printf '\033[38;2;224;175;104m') # #e0af68
+    RED=$(printf '\033[38;2;247;118;142m')    # #f7768e
+    PURPLE=$(printf '\033[38;2;187;154;247m') # #bb9af7
+    ORANGE=$(printf '\033[38;2;255;158;100m') # #ff9e64
+    DARK_BLUE=$(printf '\033[38;2;65;72;104m') # #414868
 
-# Special effects
-BOLD='\033[1m'
-DIM='\033[2m'
-UNDERLINE='\033[4m'
-BLINK='\033[5m'
-RESET='\033[0m'
-CLEAR='\033[2J'
-CURSOR_HOME='\033[H'
+    # Special effects
+    BOLD=$(printf '\033[1m')
+    DIM=$(printf '\033[2m')
+    UNDERLINE=$(printf '\033[4m')
+    BLINK=$(printf '\033[5m')
+    RESET=$(printf '\033[0m')
+    CLEAR=$(printf '\033[2J')
+    CURSOR_HOME=$(printf '\033[H')
+}
+
+# Initialize colors
+setup_colors
 
 # Utility functions
 center_text() {
     local text="$1"
     local width=${2:-$TERM_WIDTH}
-    local padding=$(( (width - ${#text}) / 2 ))
-    printf "%*s%s\n" $padding "" "$text"
-}
-
-draw_box() {
-    local width=${1:-60}
-    local height=${2:-3}
-    local char=${3:-"─"}
-    local corner_char=${4:-"╭╮╰╯"}
-
-    # Top border
-    printf "${BLUE}%c" "${corner_char:0:1}"
-    for ((i=0; i<width-2; i++)); do printf "$char"; done
-    printf "%c${RESET}\n" "${corner_char:1:1}"
-
-    # Middle empty lines
-    for ((i=0; i<height-2; i++)); do
-        printf "${BLUE}│%*s│${RESET}\n" $((width-2)) ""
-    done
-
-    # Bottom border
-    printf "${BLUE}%c" "${corner_char:2:1}"
-    for ((i=0; i<width-2; i++)); do printf "$char"; done
-    printf "%c${RESET}\n" "${corner_char:3:1}"
+    # Strip ANSI codes for accurate length calculation
+    local clean_text=$(echo "$text" | sed 's/\x1b\[[0-9;]*m//g')
+    local padding=$(( (width - ${#clean_text}) / 2 ))
+    if [ $padding -gt 0 ]; then
+        printf "%*s%b\n" $padding "" "$text"
+    else
+        printf "%b\n" "$text"
+    fi
 }
 
 progress_bar() {
@@ -98,23 +87,13 @@ loading_spinner() {
     printf "\r${GREEN}✓ ${FG}%s${RESET}\n" "$message"
 }
 
-# Set Tokyo Night terminal colors
+# Set terminal background and clear
 setup_terminal() {
-    # Set background color for full terminal
-    printf "${BG}${CLEAR}${CURSOR_HOME}"
-
-    # Set Tokyo Night color palette for terminal
-    printf '\033]4;0;color0\007'   # Black
-    printf '\033]4;1;color1\007'   # Red
-    printf '\033]4;2;color2\007'   # Green
-    printf '\033]4;3;color3\007'   # Yellow
-    printf '\033]4;4;color4\007'   # Blue
-    printf '\033]4;5;color5\007'   # Magenta
-    printf '\033]4;6;color6\007'   # Cyan
-    printf '\033]4;7;color7\007'   # White
+    printf "${CLEAR}${CURSOR_HOME}"
+    # Don't set background color as it may not work in all terminals
 }
 
-# Stylized banner with animations
+# Stylized banner with proper escaping
 show_banner() {
     clear
     setup_terminal
@@ -122,18 +101,18 @@ show_banner() {
     # Add some vertical spacing
     for ((i=0; i<3; i++)); do echo; done
 
-    # Main logo with color gradient effect
+    # Main logo - using simpler ASCII that works better
     echo
-    center_text "${CYAN}${BOLD}███████╗███╗   ███╗███╗   ██╗██╗██╗  ██╗██╗   ██╗"
-    center_text "██╔════╝████╗ ████║████╗  ██║██║╚██╗██╔╝╚██╗ ██╔╝"
-    center_text "${BLUE}██║     ██╔████╔██║██╔██╗ ██║██║ ╚███╔╝  ╚████╔╝ "
-    center_text "██║     ██║╚██╔╝██║██║╚██╗██║██║ ██╔██╗   ╚██╔╝  "
-    center_text "${PURPLE}███████╗██║ ╚═╝ ██║██║ ╚████║██║██╔╝ ██╗   ██║   "
-    center_text "╚══════╝╚═╝     ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝   ╚═╝   ${RESET}"
+    center_text "${CYAN}${BOLD} ██████╗ ███╗   ███╗███╗   ██╗██╗██╗  ██╗██╗   ██╗"
+    center_text "██╔═══██╗████╗ ████║████╗  ██║██║╚██╗██╔╝╚██╗ ██╔╝"
+    center_text "${BLUE}██║   ██║██╔████╔██║██╔██╗ ██║██║ ╚███╔╝  ╚████╔╝ "
+    center_text "██║   ██║██║╚██╔╝██║██║╚██╗██║██║ ██╔██╗   ╚██╔╝  "
+    center_text "${PURPLE}╚██████╔╝██║ ╚═╝ ██║██║ ╚████║██║██╔╝ ██╗   ██║   "
+    center_text " ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝   ╚═╝   ${RESET}"
     echo
 
     # Subtitle with typewriter effect
-    printf "%*s" $(( (TERM_WIDTH - 60) / 2 )) ""
+    printf "%*s" $(( (TERM_WIDTH - 40) / 2 )) ""
     animate_text "🚀 Declarative • 🎨 Beautiful • ⚡ Fast" "$CYAN" 0.05
     echo
     echo
@@ -162,33 +141,16 @@ section_header() {
     for ((i=0; i<width-2; i++)); do printf "─"; done
     printf "╮${RESET}\n"
 
+    local header_text=" $icon $title"
+    local header_padding=$((width - 4 - ${#header_text}))
     printf "%*s" $(( (TERM_WIDTH - width) / 2 )) ""
-    printf "${BLUE}│${BOLD}${CYAN} $icon $title"
-    printf "%*s${BLUE}│${RESET}\n" $((width - 6 - ${#title} - ${#icon})) ""
+    printf "${BLUE}│${BOLD}${CYAN}%s%*s${BLUE}│${RESET}\n" "$header_text" $header_padding ""
 
     printf "%*s" $(( (TERM_WIDTH - width) / 2 )) ""
     printf "${BLUE}╰"
     for ((i=0; i<width-2; i++)); do printf "─"; done
     printf "╯${RESET}\n"
     echo
-}
-
-# Stylized menu options
-show_menu() {
-    local title="$1"
-    shift
-    local options=("$@")
-
-    section_header "$title" "🎛️ "
-
-    for i in "${!options[@]}"; do
-        local num=$((i + 1))
-        center_text "${BOLD}${CYAN}$num.${RESET}${FG} ${options[$i]}"
-    done
-    echo
-    center_text "${DIM}${FG}Enter your choice:${RESET}"
-    printf "%*s" $(( TERM_WIDTH / 2 - 5 )) ""
-    printf "${CYAN}► ${RESET}"
 }
 
 # Enhanced user input with validation
@@ -198,7 +160,7 @@ get_input() {
     local validator="$3"
 
     while true; do
-        printf "%*s${FG}%s" $(( (TERM_WIDTH - ${#prompt} - 10) / 2 )) "" "$prompt"
+        printf "%*s${FG}%s" $(( (TERM_WIDTH - ${#prompt} - 20) / 2 )) "" "$prompt"
         if [[ -n "$default" ]]; then
             printf "${DIM} (default: $default)${RESET}"
         fi
@@ -357,7 +319,7 @@ select_theme() {
     loading_spinner $! "Applying theme configuration"
 }
 
-# Feature configuration with checkboxes
+# Feature configuration
 configure_features() {
     section_header "Feature Configuration" "⚙️ "
 
@@ -372,7 +334,7 @@ configure_features() {
     echo
     if [[ $reply =~ ^[Yy]$ ]]; then
         center_text "${GREEN}✅ Fingerprint authentication enabled${RESET}"
-        sudo sed -i 's/enable = false;/enable = true;/' /etc/nixos/configuration.nix
+        sudo sed -i 's/fingerprint = {/fingerprint = {\n        enable = true;/' /etc/nixos/configuration.nix
     fi
 
     printf "%*s" $(( (TERM_WIDTH - 35) / 2 )) ""
@@ -381,6 +343,7 @@ configure_features() {
     echo
     if [[ $reply =~ ^[Yy]$ ]]; then
         center_text "${GREEN}✅ FIDO2 authentication enabled${RESET}"
+        sudo sed -i 's/fido2 = {/fido2 = {\n        enable = true;/' /etc/nixos/configuration.nix
     fi
 
     echo
@@ -391,6 +354,7 @@ configure_features() {
     echo
     if [[ $reply =~ ^[Yy]$ ]]; then
         center_text "${GREEN}✅ Docker support enabled${RESET}"
+        # Add Docker configuration
     fi
 
     echo
@@ -401,6 +365,7 @@ configure_features() {
     echo
     if [[ $reply =~ ^[Yy]$ ]]; then
         center_text "${GREEN}✅ Gaming support enabled${RESET}"
+        # Add gaming configuration
     fi
 }
 
@@ -492,7 +457,7 @@ build_system() {
     fi
 }
 
-# Completion screen with comprehensive information
+# Completion screen
 show_complete() {
     clear
     setup_terminal
@@ -531,8 +496,6 @@ show_complete() {
     center_text "${CYAN}Super + B${RESET}          ${FG}- Web browser${RESET}"
     center_text "${CYAN}Super + E${RESET}          ${FG}- File manager${RESET}"
     center_text "${CYAN}Super + Q${RESET}          ${FG}- Close window${RESET}"
-    center_text "${CYAN}Super + F${RESET}          ${FG}- Fullscreen toggle${RESET}"
-    center_text "${CYAN}Super + 1-0${RESET}        ${FG}- Switch workspaces${RESET}"
 
     echo
     section_header "Next Steps" "📋"
@@ -543,15 +506,10 @@ show_complete() {
     center_text "${FG}2. ${CYAN}Run omnixy-security status${RESET} ${FG}- Check security setup${RESET}"
     center_text "${FG}3. ${CYAN}Configure fingerprint/FIDO2${RESET} ${FG}- Enhanced security${RESET}"
     center_text "${FG}4. ${CYAN}Explore themes${RESET} ${FG}- Try different color schemes${RESET}"
-    center_text "${FG}5. ${CYAN}Join the community${RESET} ${FG}- Get help and share feedback${RESET}"
 
     echo
-    section_header "Resources" "🔗"
-
     center_text "${BLUE}${UNDERLINE}https://github.com/TheArctesian/omnixy${RESET} ${FG}- Project homepage${RESET}"
-    center_text "${BLUE}${UNDERLINE}https://nixos.org/manual${RESET} ${FG}- NixOS documentation${RESET}"
 
-    echo
     echo
     center_text "${DIM}${FG}Thank you for choosing OmniXY! ${CYAN}❤️${RESET}"
     echo
@@ -577,7 +535,7 @@ show_complete() {
 # Main installation orchestrator
 main() {
     # Trap to restore terminal on exit
-    trap 'printf "\033[0m\033[?25h"; stty sane' EXIT
+    trap 'printf "\033[0m\033[?25h"; stty sane 2>/dev/null || true' EXIT
 
     # Hide cursor during installation
     printf '\033[?25l'
