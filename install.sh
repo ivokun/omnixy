@@ -118,7 +118,7 @@ show_banner() {
     echo
 
     # Version and edition info
-    center_text "${DIM}${FG}NixOS Edition • Version 1.0 • Tokyo Night Theme${RESET}"
+    center_text "${DIM}${FG}NixOS Edition • Version 0.1 • Tokyo Night Theme${RESET}"
     echo
 
     # Decorative border
@@ -153,6 +153,23 @@ section_header() {
     echo
 }
 
+# Clear screen and show minimal context for user input
+prepare_input_screen() {
+    local title="$1"
+    local subtitle="$2"
+
+    clear
+    setup_terminal
+
+    # Minimal header
+    echo
+    center_text "${CYAN}${BOLD}$title${RESET}"
+    if [[ -n "$subtitle" ]]; then
+        center_text "${DIM}${FG}$subtitle${RESET}"
+    fi
+    echo
+}
+
 # Enhanced user input with validation
 get_input() {
     local prompt="$1"
@@ -160,11 +177,13 @@ get_input() {
     local validator="$3"
 
     while true; do
-        printf "%*s${FG}%s" $(( (TERM_WIDTH - ${#prompt} - 20) / 2 )) "" "$prompt"
+        # Add some spacing before prompt
+        echo
+        center_text "${FG}$prompt${RESET}"
         if [[ -n "$default" ]]; then
-            printf "${DIM} (default: $default)${RESET}"
+            center_text "${DIM}(default: $default)${RESET}"
         fi
-        printf "${CYAN}: ${RESET}"
+        printf "%*s${CYAN}► ${RESET}" $(( TERM_WIDTH / 2 - 2 )) ""
 
         read -r input
         input=${input:-$default}
@@ -206,9 +225,11 @@ check_nixos() {
         center_text "${FG}It's safer to run as a regular user with sudo access${RESET}"
         echo
 
-        printf "%*s" $(( (TERM_WIDTH - 20) / 2 )) ""
-        printf "${CYAN}Continue anyway? (y/N): ${RESET}"
+        echo
+        center_text "${CYAN}Continue anyway?${RESET}"
+        printf "%*s${CYAN}(y/N): ${RESET}" $(( (TERM_WIDTH - 10) / 2 )) ""
         read -n 1 -r reply
+        echo
         echo
         if [[ ! $reply =~ ^[Yy]$ ]]; then
             center_text "${FG}Installation cancelled${RESET}"
@@ -264,7 +285,7 @@ install_config() {
 
 # Enhanced user configuration
 update_user() {
-    section_header "User Configuration" "👤"
+    prepare_input_screen "OmniXY User Configuration" "Set up your user account"
 
     local username
     username=$(get_input "Enter your username" "user" '[[ "$test_input" =~ ^[a-zA-Z][a-zA-Z0-9_-]*$ ]]')
@@ -286,36 +307,85 @@ update_user() {
 
 # Stylized theme selection
 select_theme() {
-    section_header "Theme Selection" "🎨"
+    prepare_input_screen "OmniXY Theme Selection" "Choose your visual style"
 
     local themes=(
-        "🌃 Tokyo Night - Dark theme with vibrant colors"
-        "🎀 Catppuccin - Pastel theme with modern aesthetics"
-        "🟤 Gruvbox - Retro theme with warm colors"
-        "❄️  Nord - Arctic theme with cool colors"
-        "🌲 Everforest - Green forest theme"
-        "🌹 Rose Pine - Cozy theme with muted colors"
-        "🌊 Kanagawa - Japanese-inspired theme"
-        "☀️  Catppuccin Latte - Light variant"
-        "⚫ Matte Black - Minimalist dark theme"
-        "💎 Osaka Jade - Jade green theme"
-        "☕ Ristretto - Coffee-inspired theme"
+        "Tokyo Night - Dark theme with vibrant colors"
+        "Catppuccin - Pastel theme with modern aesthetics"
+        "Gruvbox - Retro theme with warm colors"
+        "Nord - Arctic theme with cool colors"
+        "Everforest - Green forest theme"
+        "Rose Pine - Cozy theme with muted colors"
+        "Kanagawa - Japanese-inspired theme"
+        "Catppuccin Latte - Light variant"
+        "Matte Black - Minimalist dark theme"
+        "Osaka Jade - Jade green theme"
+        "Ristretto - Coffee-inspired theme"
     )
 
+    center_text "${BOLD}${PURPLE}Available Themes:${RESET}"
+    echo
+
+    # Display themes in organized layout
     for i in "${!themes[@]}"; do
         local num=$((i + 1))
-        center_text "${BOLD}${CYAN}$num.${RESET}${FG} ${themes[$i]}"
+        if [ $num -le 9 ]; then
+            center_text "${BOLD}${CYAN} $num.${RESET} ${FG}${themes[$i]}"
+        else
+            center_text "${BOLD}${CYAN}$num.${RESET} ${FG}${themes[$i]}"
+        fi
     done
 
     echo
+    echo
+
+    # Clear instruction section
+    center_text "${BOLD}${YELLOW}Instructions:${RESET}"
+    center_text "${FG}Enter the number of your preferred theme${RESET}"
+    center_text "${DIM}Press Enter to use the default (Tokyo Night)${RESET}"
+
+    echo
+
+    # Create visible input box
+    printf "%*s" $(( (TERM_WIDTH - 40) / 2 )) ""
+    printf "${BLUE}╭──────────────────────────────────────╮${RESET}\n"
+    printf "%*s" $(( (TERM_WIDTH - 40) / 2 )) ""
+    printf "${BLUE}│${RESET}"
+    printf "%*s${FG}Theme Selection${RESET}%*s" 12 "" 12 ""
+    printf "${BLUE}│${RESET}\n"
+    printf "%*s" $(( (TERM_WIDTH - 40) / 2 )) ""
+    printf "${BLUE}├──────────────────────────────────────┤${RESET}\n"
+    printf "%*s" $(( (TERM_WIDTH - 40) / 2 )) ""
+    printf "${BLUE}│${RESET}%*s${CYAN}Enter choice (1-11):${RESET}%*s" 7 "" 7 ""
+    printf "${BLUE}│${RESET}\n"
+    printf "%*s" $(( (TERM_WIDTH - 40) / 2 )) ""
+    printf "${BLUE}│${RESET}%*s${DIM}Default: 1${RESET}%*s" 13 "" 13 ""
+    printf "${BLUE}│${RESET}\n"
+    printf "%*s" $(( (TERM_WIDTH - 40) / 2 )) ""
+    printf "${BLUE}╰──────────────────────────────────────╯${RESET}\n"
+
+    printf "%*s${CYAN}► ${RESET}" $(( TERM_WIDTH / 2 - 2 )) ""
+
+    # Get input with validation
     local theme_choice
-    theme_choice=$(get_input "Select theme (1-11)" "1" '[[ "$test_input" =~ ^([1-9]|1[01])$ ]]')
+    while true; do
+        read -r theme_choice
+        theme_choice=${theme_choice:-1}
+
+        if [[ "$theme_choice" =~ ^([1-9]|1[01])$ ]]; then
+            break
+        else
+            printf "%*s${RED}❌ Please enter a number between 1 and 11${RESET}\n" $(( (TERM_WIDTH - 45) / 2 )) ""
+            printf "%*s${CYAN}► ${RESET}" $(( TERM_WIDTH / 2 - 2 )) ""
+        fi
+    done
 
     local theme_names=("tokyo-night" "catppuccin" "gruvbox" "nord" "everforest" "rose-pine" "kanagawa" "catppuccin-latte" "matte-black" "osaka-jade" "ristretto")
     local selected_theme=${theme_names[$((theme_choice - 1))]}
 
     echo
-    center_text "${FG}Selected theme: ${CYAN}${BOLD}$selected_theme${RESET}"
+    center_text "${GREEN}✅ Selected theme: ${CYAN}${BOLD}$selected_theme${RESET}"
+    echo
 
     (sudo sed -i "s/currentTheme = \".*\"/currentTheme = \"$selected_theme\"/" /etc/nixos/configuration.nix && sleep 0.5) &
     loading_spinner $! "Applying theme configuration"
@@ -330,8 +400,9 @@ configure_features() {
 
     # Security features
     center_text "${BOLD}${PURPLE}Security Features:${RESET}"
-    printf "%*s" $(( (TERM_WIDTH - 40) / 2 )) ""
-    printf "${CYAN}Enable fingerprint authentication? (y/N): ${RESET}"
+    echo
+    center_text "${FG}Enable fingerprint authentication?${RESET}"
+    printf "%*s${CYAN}(y/N): ${RESET}" $(( (TERM_WIDTH - 10) / 2 )) ""
     read -n 1 -r reply
     echo
     if [[ $reply =~ ^[Yy]$ ]]; then
@@ -339,8 +410,9 @@ configure_features() {
         sudo sed -i 's/fingerprint = {/fingerprint = {\n        enable = true;/' /etc/nixos/configuration.nix
     fi
 
-    printf "%*s" $(( (TERM_WIDTH - 35) / 2 )) ""
-    printf "${CYAN}Enable FIDO2 security keys? (y/N): ${RESET}"
+    echo
+    center_text "${FG}Enable FIDO2 security keys?${RESET}"
+    printf "%*s${CYAN}(y/N): ${RESET}" $(( (TERM_WIDTH - 10) / 2 )) ""
     read -n 1 -r reply
     echo
     if [[ $reply =~ ^[Yy]$ ]]; then
@@ -350,8 +422,9 @@ configure_features() {
 
     echo
     center_text "${BOLD}${BLUE}Development Features:${RESET}"
-    printf "%*s" $(( (TERM_WIDTH - 30) / 2 )) ""
-    printf "${CYAN}Enable Docker support? (y/N): ${RESET}"
+    echo
+    center_text "${FG}Enable Docker support?${RESET}"
+    printf "%*s${CYAN}(y/N): ${RESET}" $(( (TERM_WIDTH - 10) / 2 )) ""
     read -n 1 -r reply
     echo
     if [[ $reply =~ ^[Yy]$ ]]; then
@@ -361,8 +434,9 @@ configure_features() {
 
     echo
     center_text "${BOLD}${YELLOW}Gaming Features:${RESET}"
-    printf "%*s" $(( (TERM_WIDTH - 40) / 2 )) ""
-    printf "${CYAN}Enable gaming support (Steam, Wine)? (y/N): ${RESET}"
+    echo
+    center_text "${FG}Enable gaming support (Steam, Wine)?${RESET}"
+    printf "%*s${CYAN}(y/N): ${RESET}" $(( (TERM_WIDTH - 10) / 2 )) ""
     read -n 1 -r reply
     echo
     if [[ $reply =~ ^[Yy]$ ]]; then
@@ -397,9 +471,11 @@ build_system() {
     center_text "${FG}A stable internet connection is required${RESET}"
     echo
 
-    printf "%*s" $(( (TERM_WIDTH - 30) / 2 )) ""
-    printf "${CYAN}Continue with system build? (Y/n): ${RESET}"
+    echo
+    center_text "${CYAN}${BOLD}Continue with system build?${RESET}"
+    printf "%*s${CYAN}(Y/n): ${RESET}" $(( (TERM_WIDTH - 10) / 2 )) ""
     read -n 1 -r reply
+    echo
     echo
 
     if [[ $reply =~ ^[Nn]$ ]]; then
@@ -517,8 +593,11 @@ show_complete() {
     echo
 
     # Auto-reboot prompt
-    printf "%*s${YELLOW}Reboot now to complete installation? (Y/n): ${RESET}" $(( (TERM_WIDTH - 45) / 2 )) ""
+    echo
+    center_text "${YELLOW}${BOLD}Reboot now to complete installation?${RESET}"
+    printf "%*s${CYAN}(Y/n): ${RESET}" $(( (TERM_WIDTH - 10) / 2 )) ""
     read -n 1 -r reply
+    echo
     echo
 
     if [[ ! $reply =~ ^[Nn]$ ]]; then
@@ -549,9 +628,12 @@ main() {
     center_text "${FG}Transform your NixOS into a beautiful, modern desktop experience${RESET}"
     center_text "${DIM}${FG}This installer will guide you through the complete setup process${RESET}"
     echo
+    echo
 
-    printf "%*s${CYAN}${BOLD}Ready to begin installation? (Y/n): ${RESET}" $(( (TERM_WIDTH - 35) / 2 )) ""
+    center_text "${CYAN}${BOLD}Ready to begin installation?${RESET}"
+    printf "%*s${CYAN}(Y/n): ${RESET}" $(( (TERM_WIDTH - 10) / 2 )) ""
     read -n 1 -r reply
+    echo
     echo
 
     if [[ $reply =~ ^[Nn]$ ]]; then
