@@ -32,6 +32,20 @@ in
 {
   # Tokyo Night theme configuration
   config = {
+    # Set theme wallpaper
+    omnixy.desktop.wallpaper = ./wallpapers/tokyo-night/1-scenery-pink-lakeside-sunset-lake-landscape-scenic-panorama-7680x3215-144.png;
+
+    # Hyprland theme colors
+    environment.etc."omnixy/hyprland/theme.conf".text = ''
+      general {
+          col.active_border = rgba(7aa2f7ee) rgba(c4a7e7ee) 45deg
+          col.inactive_border = rgba(414868aa)
+      }
+      decoration {
+          col.shadow = rgba(1a1b26ee)
+      }
+    '';
+
     # Color palette - use nix-colors if available
     environment.variables = {
       OMNIXY_THEME = "tokyo-night";

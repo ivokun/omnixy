@@ -6,6 +6,11 @@ let
   cfg = config.omnixy.desktop;
 in
 {
+  imports = [
+    ./hyprland/autostart.nix
+    ./hyprland/bindings.nix
+    ./hyprland/idle.nix
+  ];
   options.omnixy.desktop = {
     enable = mkEnableOption "OmniXY Hyprland desktop environment";
 
@@ -32,6 +37,12 @@ in
       type = types.nullOr types.path;
       default = null;
       description = "Path to wallpaper image (optional)";
+    };
+
+    idleSuspend = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Enable system suspend after idle timeout";
     };
   };
 
@@ -184,14 +195,18 @@ in
           sensitivity = 0 # -1.0 - 1.0, 0 means no modification
       }
 
+      # Include modular configuration files
+      source = /etc/omnixy/hyprland/theme.conf
+      source = /etc/omnixy/hyprland/autostart.conf
+      source = /etc/omnixy/hyprland/bindings.conf
+      source = /etc/omnixy/hyprland/hypridle.conf
+
       # General configuration
       general {
           gaps_in = 5
           gaps_out = 10
           border_size = 2
-          col.active_border = rgba(7aa2f7ee) rgba(c4a7e7ee) 45deg
-          col.inactive_border = rgba(595959aa)
-
+          # Colors are defined in theme.conf
           layout = dwindle
           allow_tearing = false
       }
@@ -211,7 +226,7 @@ in
           drop_shadow = true
           shadow_range = 20
           shadow_render_power = 3
-          col.shadow = rgba(1a1a1aee)
+          # Shadow color is defined in theme.conf
 
           dim_inactive = false
           dim_strength = 0.1
@@ -294,8 +309,8 @@ in
       bind = $mainMod, Return, exec, ${cfg.defaultTerminal}
       bind = $mainMod, B, exec, ${cfg.defaultBrowser}
       bind = $mainMod, E, exec, nautilus
+      bind = $mainMod, R, exec, walker
       bind = $mainMod, D, exec, walker
-      bind = $mainMod SHIFT, D, exec, wofi --show drun
       bind = $mainMod, V, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy
 
       # Window management
@@ -349,7 +364,7 @@ in
       bind = $mainMod, mouse_up, workspace, e-1
 
       # Resize mode
-      bind = $mainMod, R, submap, resize
+      bind = $mainMod ALT, R, submap, resize
       submap = resize
       binde = , h, resizeactive, -10 0
       binde = , l, resizeactive, 10 0

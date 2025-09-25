@@ -92,6 +92,31 @@ in
     utilities = [ "calculators" "converters" "system tools" ];
   };
 
+  # Hyprland configuration helper
+  hyprlandConfig = colors: ''
+    general {
+        gaps_in = 5
+        gaps_out = 10
+        border_size = 2
+        col.active_border = ${colors.active_border}
+        col.inactive_border = ${colors.inactive_border}
+        layout = dwindle
+    }
+
+    decoration {
+        rounding = 10
+        blur {
+            enabled = true
+            size = 6
+            passes = 2
+        }
+        drop_shadow = true
+        shadow_range = 20
+        shadow_render_power = 3
+        col.shadow = ${colors.shadow}
+    }
+  '';
+
   # Standard service patterns
   service = {
     # Create a basic systemd service with OmniXY defaults

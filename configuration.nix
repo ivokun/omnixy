@@ -20,6 +20,12 @@ in
     ./modules/lib.nix
     ./modules/core.nix
     ./modules/colors.nix
+    ./modules/boot.nix
+    ./modules/security.nix
+    ./modules/fastfetch.nix
+    ./modules/walker.nix
+    ./modules/scripts.nix
+    ./modules/menus.nix
     ./modules/desktop/hyprland.nix
     ./modules/packages.nix
     ./modules/development.nix
@@ -59,7 +65,7 @@ in
     };
   };
 
-  # Bootloader
+  # Bootloader (now configured in boot.nix module)
   boot = {
     loader = {
       systemd-boot = {
@@ -67,13 +73,6 @@ in
         configurationLimit = 10;
       };
       efi.canTouchEfiVariables = true;
-    };
-
-    # Plymouth for boot splash
-    plymouth = {
-      enable = true;
-      theme = "bgrt";  # Use default theme for now
-      # themePackages = [ (pkgs.callPackage ./packages/plymouth-theme.nix {}) ];
     };
 
     # Kernel
@@ -151,6 +150,27 @@ in
 
     # Quick Setup - Choose a preset that matches your use case
     preset = "developer"; # Options: minimal, developer, creator, gamer, office, everything
+
+    # Security configuration
+    security = {
+      enable = true;
+      fingerprint = {
+        enable = false;        # Set to true to enable fingerprint auth
+        autoDetect = true;     # Auto-detect fingerprint hardware
+      };
+      fido2 = {
+        enable = false;        # Set to true to enable FIDO2 auth
+        autoDetect = true;     # Auto-detect FIDO2 devices
+      };
+      systemHardening = {
+        enable = true;         # Enable security hardening
+        faillock = {
+          enable = true;       # Enable account lockout protection
+          denyAttempts = 10;   # Lock after 10 failed attempts
+          unlockTime = 120;    # Unlock after 2 minutes
+        };
+      };
+    };
 
     # Color scheme configuration (optional)
     # Uncomment and customize these options for automatic color generation:

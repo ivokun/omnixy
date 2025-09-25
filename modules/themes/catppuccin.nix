@@ -3,6 +3,20 @@
 {
   # Catppuccin Mocha theme configuration
   config = {
+    # Set theme wallpaper
+    omnixy.desktop.wallpaper = ./wallpapers/catppuccin/1-catppuccin.png;
+
+    # Hyprland theme colors (from omarchy)
+    environment.etc."omnixy/hyprland/theme.conf".text = ''
+      general {
+          col.active_border = rgb(c6d0f5)
+          col.inactive_border = rgba(313244aa)
+      }
+      decoration {
+          col.shadow = rgba(1e1e2eee)
+      }
+    '';
+
     # Color palette
     environment.variables = {
       OMNIXY_THEME = "catppuccin";

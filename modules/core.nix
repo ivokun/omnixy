@@ -310,7 +310,7 @@ in
         omnixy-theme() {
           local theme=$1
           if [ -z "$theme" ]; then
-            echo "Available themes: tokyo-night, catppuccin, gruvbox, nord, everforest, rose-pine, kanagawa"
+            echo "Available themes: tokyo-night, catppuccin, catppuccin-latte, gruvbox, nord, everforest, rose-pine, kanagawa, matte-black, osaka-jade, ristretto"
             return 1
           fi
 
