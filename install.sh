@@ -169,7 +169,7 @@ get_input() {
         read -r input
         input=${input:-$default}
 
-        if [[ -z "$validator" ]] || eval "$validator '$input'"; then
+        if [[ -z "$validator" ]] || (eval "test_input='$input'; $validator"); then
             echo "$input"
             return
         else
@@ -224,8 +224,10 @@ backup_config() {
     if [ -d /etc/nixos ]; then
         section_header "Configuration Backup" "💾"
 
-        BACKUP_DIR="/etc/nixos.backup.$(date +%Y%m%d-%H%M%S)"
-        center_text "${FG}Creating backup: ${CYAN}$BACKUP_DIR${RESET}"
+        TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+        BACKUP_DIR="/etc/nixos.backup.$TIMESTAMP"
+        center_text "${FG}Creating configuration backup${RESET}"
+        center_text "${DIM}${CYAN}$BACKUP_DIR${RESET}"
         echo
 
         # Simulate progress for visual appeal
@@ -265,7 +267,7 @@ update_user() {
     section_header "User Configuration" "👤"
 
     local username
-    username=$(get_input "Enter your username" "user" '[[ $1 =~ ^[a-zA-Z][a-zA-Z0-9_-]*$ ]]')
+    username=$(get_input "Enter your username" "user" '[[ "$test_input" =~ ^[a-zA-Z][a-zA-Z0-9_-]*$ ]]')
 
     echo
     center_text "${FG}Configuring system for user: ${CYAN}${BOLD}$username${RESET}"
@@ -307,7 +309,7 @@ select_theme() {
 
     echo
     local theme_choice
-    theme_choice=$(get_input "Select theme (1-11)" "1" '[[ $1 =~ ^[1-9]$|^1[01]$ ]]')
+    theme_choice=$(get_input "Select theme (1-11)" "1" '[[ "$test_input" =~ ^([1-9]|1[01])$ ]]')
 
     local theme_names=("tokyo-night" "catppuccin" "gruvbox" "nord" "everforest" "rose-pine" "kanagawa" "catppuccin-latte" "matte-black" "osaka-jade" "ristretto")
     local selected_theme=${theme_names[$((theme_choice - 1))]}
