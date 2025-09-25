@@ -14,8 +14,7 @@ with lib;
 
   # Common hardware support
   hardware = {
-    # Enable all firmware
-    enableAllFirmware = true;
+    # Enable redistributable firmware only
     enableRedistributableFirmware = true;
 
     # CPU microcode updates
@@ -25,8 +24,6 @@ with lib;
     # OpenGL/Graphics
     opengl = {
       enable = true;
-      driSupport = true;
-      driSupport32Bit = true;
 
       # Common OpenGL packages
       extraPackages = with pkgs; [
@@ -50,8 +47,16 @@ with lib;
     # Sensor support (for laptops)
     sensor.iio.enable = true;
 
-    # Firmware updater
-    fwupd.enable = true;
+    # Scanner support
+    sane = {
+      enable = true;
+      extraBackends = with pkgs; [
+        sane-airscan
+        epkowa
+      ];
+    };
+
+    # Firmware updater (moved to services section)
   };
 
   # Kernel modules
@@ -80,8 +85,6 @@ with lib;
     # Power profiles daemon (modern power management)
     power-profiles-daemon.enable = true;
 
-    # Firmware update service
-    fwupd.enable = true;
 
     # Hardware monitoring
     smartd = {
@@ -112,11 +115,9 @@ with lib;
     hwinfo
     inxi
     dmidecode
-    lscpu
-    lsusb
-    lspci
-    pciutils
-    usbutils
+    util-linux # provides lscpu
+    pciutils # provides lspci
+    usbutils # provides lsusb
 
     # Disk tools
     smartmontools
@@ -164,7 +165,7 @@ with lib;
   # Virtual console configuration
   console = {
     earlySetup = true;
-    font = "${pkgs.terminus_font}/share/consolefonts/ter-132n.psf.gz";
+    font = lib.mkDefault "${pkgs.terminus_font}/share/consolefonts/ter-132n.psf.gz";
     packages = [ pkgs.terminus_font ];
   };
 }

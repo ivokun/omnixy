@@ -16,6 +16,7 @@
   # Packages to install
   home.packages = with pkgs; [
     # Terminal utilities
+    ghostty
     alacritty
     kitty
     wezterm
@@ -37,7 +38,7 @@
     # System monitoring
     btop
     htop
-    nvtop
+    nvtopPackages.full
 
     # Media
     mpv
@@ -84,7 +85,9 @@
     wev
 
     # Fonts
-    (nerdfonts.override { fonts = [ "JetBrainsMono" "FiraCode" "Hack" ]; })
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.fira-code
+    nerd-fonts.hack
     noto-fonts
     noto-fonts-emoji
     liberation_ttf
@@ -182,23 +185,23 @@
       '';
 
       character = {
-        success_symbol = "[➜](bold green)";
-        error_symbol = "[➜](bold red)";
+        success_symbol = lib.mkDefault "[➜](bold green)";
+        error_symbol = lib.mkDefault "[➜](bold red)";
       };
 
       directory = {
         truncation_length = 3;
         truncate_to_repo = true;
-        style = "bold cyan";
+        style = lib.mkDefault "bold cyan";
       };
 
       git_branch = {
-        style = "bold purple";
+        style = lib.mkDefault "bold purple";
         symbol = " ";
       };
 
       git_status = {
-        style = "bold red";
+        style = lib.mkDefault "bold red";
         ahead = "⇡\${count}";
         diverged = "⇕⇡\${ahead_count}⇣\${behind_count}";
         behind = "⇣\${count}";
@@ -298,7 +301,7 @@
     ];
 
     userSettings = {
-      "workbench.colorTheme" = "One Dark Pro";
+      "workbench.colorTheme" = lib.mkDefault "One Dark Pro";
       "workbench.iconTheme" = "material-icon-theme";
       "editor.fontFamily" = "'JetBrainsMono Nerd Font', monospace";
       "editor.fontSize" = 14;
@@ -377,10 +380,10 @@
   gtk = {
     enable = true;
     theme = {
-      name = "Catppuccin-Mocha-Standard-Blue-dark";
-      package = pkgs.catppuccin-gtk.override {
+      name = lib.mkDefault "Catppuccin-Mocha-Standard-Blue-dark";
+      package = lib.mkDefault (pkgs.catppuccin-gtk.override {
         variant = "mocha";
-      };
+      });
     };
     iconTheme = {
       name = "Papirus-Dark";

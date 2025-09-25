@@ -6,21 +6,30 @@ let
   cfg = config.omnixy;
 in
 {
+  # XDG Desktop Portals (required for Flatpak)
+  xdg.portal = {
+    enable = true;
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-hyprland
+      xdg-desktop-portal-gtk
+    ];
+    config.common.default = "*";
+  };
+
+  # Tuigreet display manager (following omarchy-nix pattern)
+  services.greetd = {
+    enable = true;
+    settings.default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd Hyprland";
+  };
+
   # System services configuration
   services = {
     # Display server
     xserver = {
       enable = true;
 
-      # Display Manager
-      displayManager = {
-        gdm = {
-          enable = true;
-          wayland = true;
-        };
-
-        defaultSession = "hyprland";
-      };
+      # Display Manager disabled - using greetd instead
+      displayManager.gdm.enable = false;
 
       # Touchpad support
       libinput = {
@@ -52,14 +61,6 @@ in
       ];
     };
 
-    # Scanner support
-    sane = {
-      enable = true;
-      extraBackends = with pkgs; [
-        sane-airscan
-        epkowa
-      ];
-    };
 
     # Sound
     pipewire = {
@@ -110,7 +111,6 @@ in
       enable = true;
       interval = "daily";
       package = pkgs.plocate;
-      localuser = null;
     };
 
     # Backup service (optional)

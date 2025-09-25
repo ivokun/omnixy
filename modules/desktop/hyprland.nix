@@ -18,7 +18,7 @@ in
 
     defaultTerminal = mkOption {
       type = types.str;
-      default = "alacritty";
+      default = "ghostty";
       description = "Default terminal emulator";
     };
 
@@ -29,9 +29,9 @@ in
     };
 
     wallpaper = mkOption {
-      type = types.path;
-      default = ./wallpapers/default.jpg;
-      description = "Path to wallpaper image";
+      type = types.nullOr types.path;
+      default = null;
+      description = "Path to wallpaper image (optional)";
     };
   };
 
@@ -262,11 +262,11 @@ in
           mouse_move_enables_dpms = true
           key_press_enables_dpms = true
           enable_swallow = true
-          swallow_regex = ^(alacritty|kitty|footclient)$
+          swallow_regex = ^(ghostty|alacritty|kitty|footclient)$
       }
 
       # Window rules
-      windowrulev2 = opacity 0.9 override 0.9 override, class:^(Alacritty|kitty)$
+      windowrulev2 = opacity 0.9 override 0.9 override, class:^(ghostty|Alacritty|kitty)$
       windowrulev2 = opacity 0.9 override 0.9 override, class:^(Code|code-oss)$
       windowrulev2 = float, class:^(pavucontrol|nm-connection-editor|blueman-manager)$
       windowrulev2 = float, class:^(org.gnome.Calculator|gnome-calculator)$

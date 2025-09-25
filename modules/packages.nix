@@ -4,22 +4,30 @@ with lib;
 
 let
   cfg = config.omnixy;
+  omnixy = import ./helpers.nix { inherit config pkgs lib; };
 in
 {
   options.omnixy.packages = {
     enable = mkEnableOption "OmniXY packages";
 
+    exclude = mkOption {
+      type = types.listOf types.str;
+      default = [];
+      example = [ "discord" "spotify" "steam" ];
+      description = "List of package names to exclude from installation";
+    };
+
     categories = {
       base = mkEnableOption "Base system packages" // { default = true; };
-      development = mkEnableOption "Development packages" // { default = true; };
-      multimedia = mkEnableOption "Multimedia packages" // { default = true; };
-      productivity = mkEnableOption "Productivity packages" // { default = true; };
-      gaming = mkEnableOption "Gaming packages" // { default = false; };
+      development = mkEnableOption "Development packages" // { default = omnixy.isEnabled "coding"; };
+      multimedia = mkEnableOption "Multimedia packages" // { default = omnixy.isEnabled "media"; };
+      productivity = mkEnableOption "Productivity packages" // { default = (omnixy.isEnabled "office" || omnixy.isEnabled "communication"); };
+      gaming = mkEnableOption "Gaming packages" // { default = omnixy.isEnabled "gaming"; };
     };
   };
 
   config = mkIf (cfg.enable or true) {
-    environment.systemPackages = with pkgs;
+    environment.systemPackages = with pkgs; omnixy.filterPackages (
       # Base system packages (always installed)
       [
         # Core utilities
@@ -66,8 +74,7 @@ in
 
         # Text processing
         vim
-        nano
-        sed
+        gnused
         gawk
         jq
         yq-go
@@ -177,7 +184,7 @@ in
         sqlite
         redis
         mongodb-tools
-        dbeaver
+        dbeaver-bin
 
         # API testing
         httpie
@@ -207,7 +214,6 @@ in
         easyeffects
         spotify
         spotifyd
-        spotify-tui
         cmus
         mpd
         ncmpcpp
@@ -216,7 +222,7 @@ in
         mpv
         vlc
         obs-studio
-        kdenlive
+        kdePackages.kdenlive
         handbrake
         ffmpeg-full
 
@@ -239,7 +245,7 @@ in
         # PDF
         zathura
         evince
-        okular
+        kdePackages.okular
         mupdf
       ]
 
@@ -258,7 +264,7 @@ in
         signal-desktop
         element-desktop
         zoom-us
-        teams
+        # teams not available on x86_64-linux
 
         # Office
         libreoffice
@@ -304,29 +310,26 @@ in
         gamemode
         discord
         obs-studio
-      ];
+      ]
+    ); # End of filterPackages
 
     # Font packages
     fonts.packages = with pkgs; [
       # Nerd fonts (for icons in terminal)
-      (nerdfonts.override {
-        fonts = [
-          "JetBrainsMono"
-          "FiraCode"
-          "Hack"
-          "Iosevka"
-          "Meslo"
-          "SourceCodePro"
-          "UbuntuMono"
-          "DroidSansMono"
-          "RobotoMono"
-          "Inconsolata"
-        ];
-      })
+      nerd-fonts.jetbrains-mono
+      nerd-fonts.fira-code
+      nerd-fonts.hack
+      nerd-fonts.iosevka
+      nerd-fonts.meslo-lg
+      nerd-fonts.sauce-code-pro
+      nerd-fonts.ubuntu-mono
+      nerd-fonts.droid-sans-mono
+      nerd-fonts.roboto-mono
+      nerd-fonts.inconsolata
 
       # System fonts
       noto-fonts
-      noto-fonts-cjk
+      noto-fonts-cjk-sans
       noto-fonts-emoji
       liberation_ttf
       ubuntu_font_family

@@ -1,50 +1,79 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
+let
+  cfg = config.omnixy;
+
+  # Use nix-colors if available and configured, otherwise fallback to manual colors
+  useNixColors = cfg.colorScheme != null;
+  colorScheme = cfg.colorScheme;
+
+  # Manual Tokyo Night colors as fallback
+  manualColors = {
+    bg = "#1a1b26";
+    fg = "#c0caf5";
+    accent = "#7aa2f7";
+    red = "#f7768e";
+    green = "#9ece6a";
+    yellow = "#e0af68";
+    blue = "#7aa2f7";
+    magenta = "#bb9af7";
+    cyan = "#7dcfff";
+    white = "#c0caf5";
+    black = "#15161e";
+  };
+
+  # Helper function to get color from scheme or fallback
+  getColor = name: fallback:
+    if useNixColors && colorScheme ? colors && colorScheme.colors ? ${name}
+    then "#${colorScheme.colors.${name}}"
+    else fallback;
+
+in
 {
   # Tokyo Night theme configuration
   config = {
-    # Color palette
+    # Color palette - use nix-colors if available
     environment.variables = {
       OMNIXY_THEME = "tokyo-night";
-      OMNIXY_THEME_BG = "#1a1b26";
-      OMNIXY_THEME_FG = "#c0caf5";
-      OMNIXY_THEME_ACCENT = "#7aa2f7";
+      OMNIXY_THEME_BG = getColor "base00" manualColors.bg;
+      OMNIXY_THEME_FG = getColor "base05" manualColors.fg;
+      OMNIXY_THEME_ACCENT = getColor "base0D" manualColors.accent;
     };
 
     # Home-manager theme configuration
     home-manager.users.${config.omnixy.user or "user"} = {
-      # Alacritty theme
+      # Alacritty theme - dynamic colors based on nix-colors or fallback
       programs.alacritty.settings.colors = {
         primary = {
-          background = "#1a1b26";
-          foreground = "#c0caf5";
+          background = getColor "base00" manualColors.bg;
+          foreground = getColor "base05" manualColors.fg;
         };
 
         normal = {
-          black = "#15161e";
-          red = "#f7768e";
-          green = "#9ece6a";
-          yellow = "#e0af68";
-          blue = "#7aa2f7";
-          magenta = "#bb9af7";
-          cyan = "#7dcfff";
-          white = "#a9b1d6";
+          black = getColor "base00" manualColors.black;
+          red = getColor "base08" manualColors.red;
+          green = getColor "base0B" manualColors.green;
+          yellow = getColor "base0A" manualColors.yellow;
+          blue = getColor "base0D" manualColors.blue;
+          magenta = getColor "base0E" manualColors.magenta;
+          cyan = getColor "base0C" manualColors.cyan;
+          white = getColor "base05" manualColors.white;
         };
 
         bright = {
-          black = "#414868";
-          red = "#f7768e";
-          green = "#9ece6a";
-          yellow = "#e0af68";
-          blue = "#7aa2f7";
-          magenta = "#bb9af7";
-          cyan = "#7dcfff";
-          white = "#c0caf5";
+          black = getColor "base03" "#414868";
+          red = getColor "base08" manualColors.red;
+          green = getColor "base0B" manualColors.green;
+          yellow = getColor "base0A" manualColors.yellow;
+          blue = getColor "base0D" manualColors.blue;
+          magenta = getColor "base0E" manualColors.magenta;
+          cyan = getColor "base0C" manualColors.cyan;
+          white = getColor "base07" manualColors.fg;
         };
 
         indexed_colors = [
-          { index = 16; color = "#ff9e64"; }
-          { index = 17; color = "#db4b4b"; }
+          { index = 16; color = getColor "base09" "#ff9e64"; }
+          { index = 17; color = getColor "base0F" "#db4b4b"; }
         ];
       };
 
@@ -250,7 +279,8 @@
       (writeShellScriptBin "set-wallpaper" ''
         #!/usr/bin/env bash
         # Set Tokyo Night themed wallpaper
-        swww img ${./wallpapers/tokyo-night.jpg} --transition-type wipe --transition-angle 30 --transition-step 90
+        echo "Wallpaper functionality disabled - add wallpaper manually with swww"
+        echo "Usage: swww img /path/to/wallpaper.jpg --transition-type wipe --transition-angle 30"
       '')
     ];
   };

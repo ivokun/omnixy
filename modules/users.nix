@@ -63,15 +63,14 @@ in
   # User environment
   environment.systemPackages = with pkgs; [
     # User management tools
-    shadow
-    passwd
+    shadow # provides passwd, useradd, etc.
 
     # Session management
-    loginctl
+    systemd # provides loginctl
 
     # User info
     finger_bsd
-    id-utils
+    idutils
   ];
 
   # User-specific services

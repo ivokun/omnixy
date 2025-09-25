@@ -16,8 +16,10 @@ in
     # Include the results of the hardware scan
     ./hardware-configuration.nix
 
-    # Omarchy modules
+    # OmniXY modules (lib must be first to provide helpers)
+    ./modules/lib.nix
     ./modules/core.nix
+    ./modules/colors.nix
     ./modules/desktop/hyprland.nix
     ./modules/packages.nix
     ./modules/development.nix
@@ -26,6 +28,9 @@ in
     ./modules/services.nix
     ./modules/hardware
   ];
+
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
 
   # Enable flakes
   nix = {
@@ -67,8 +72,8 @@ in
     # Plymouth for boot splash
     plymouth = {
       enable = true;
-      theme = "omnixy";
-      themePackages = [ (pkgs.callPackage ./packages/plymouth-theme.nix {}) ];
+      theme = "bgrt";  # Use default theme for now
+      # themePackages = [ (pkgs.callPackage ./packages/plymouth-theme.nix {}) ];
     };
 
     # Kernel
@@ -104,8 +109,7 @@ in
     };
   };
 
-  # Sound
-  sound.enable = true;
+  # Sound (deprecated option removed)
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -121,13 +125,8 @@ in
     enable = true;
     excludePackages = [ pkgs.xterm ];
 
-    # Display manager
-    displayManager = {
-      gdm = {
-        enable = true;
-        wayland = true;
-      };
-    };
+    # Display manager disabled - using tuigreet in services.nix
+    displayManager.gdm.enable = false;
   };
 
   # Console configuration
@@ -146,14 +145,37 @@ in
   # Custom OmniXY settings
   omnixy = {
     enable = true;
+    user = "user"; # Change this to your username
     theme = currentTheme;
+    displayManager = "tuigreet";
 
-    # Feature flags
-    features = {
-      docker = true;
-      development = true;
-      gaming = false;
-      multimedia = true;
+    # Quick Setup - Choose a preset that matches your use case
+    preset = "developer"; # Options: minimal, developer, creator, gamer, office, everything
+
+    # Color scheme configuration (optional)
+    # Uncomment and customize these options for automatic color generation:
+    # colorScheme = inputs.nix-colors.colorSchemes.tokyo-night-dark;
+    # wallpaper = /path/to/your/wallpaper.jpg;
+
+    # Fine-grained feature control (overrides preset settings)
+    # Uncomment and customize as needed:
+    # features = {
+    #   coding = true;           # Development tools, editors, programming languages
+    #   containers = true;       # Docker and container support
+    #   gaming = false;          # Steam, Wine, gaming performance tools
+    #   media = true;            # Video players, image viewers, media editing
+    #   office = false;          # Office suite, PDF viewers, productivity apps
+    #   communication = false;   # Chat apps, email, video conferencing
+    #   virtualization = false;  # VirtualBox, QEMU, VM tools
+    #   backup = false;          # Backup tools, cloud sync
+    #   customThemes = true;     # Advanced theming with nix-colors
+    #   wallpaperEffects = true; # Dynamic wallpapers and color generation
+    # };
+
+    # Package management
+    packages = {
+      # Example: Exclude specific packages you don't want
+      # exclude = [ "discord" "spotify" "steam" "teams" ];
     };
   };
 }

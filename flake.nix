@@ -24,14 +24,16 @@
       inputs.hyprland.follows = "hyprland";
     };
 
+    # Nix colors for automatic color scheme generation
+    nix-colors = {
+      url = "github:misterio77/nix-colors";
+    };
+
     # Stylix for theming
     stylix = {
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # Nix colors
-    nix-colors.url = "github:misterio77/nix-colors";
 
     # Neovim nightly
     neovim-nightly-overlay = {
@@ -53,8 +55,8 @@
           allowUnfree = true;
         };
         overlays = [
-          inputs.nur.overlay
-          inputs.neovim-nightly-overlay.overlay
+          inputs.nur.overlays.default
+          inputs.neovim-nightly-overlay.overlays.default
         ];
       };
     in
@@ -76,6 +78,9 @@
                   # Replace with your username
                   user = import ./home.nix;
                 };
+                sharedModules = [
+                  inputs.nix-colors.homeManagerModules.default
+                ];
               };
             }
           ];
@@ -178,8 +183,8 @@
         # OmniXY scripts as packages
         omnixy-scripts = pkgs.callPackage ./packages/scripts.nix {};
 
-        # Plymouth theme
-        plymouth-theme-omnixy = pkgs.callPackage ./packages/plymouth-theme.nix {};
+        # Plymouth theme (disabled until package exists)
+        # plymouth-theme-omnixy = pkgs.callPackage ./packages/plymouth-theme.nix {};
       };
 
       # Apps that can be run

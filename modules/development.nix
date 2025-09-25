@@ -3,10 +3,11 @@
 with lib;
 
 let
-  cfg = config.omnixy.features.development;
+  cfg = config.omnixy;
+  omnixy = import ./helpers.nix { inherit config pkgs lib; };
 in
 {
-  config = mkIf cfg {
+  config = omnixy.withFeature "coding" {
     # Development tools
     environment.systemPackages = with pkgs; [
       # Version control
@@ -102,7 +103,7 @@ in
       sqlite
       redis
       mongodb
-      dbeaver
+      dbeaver-bin
 
       # Container tools
       docker
@@ -179,100 +180,10 @@ in
       tmuxinator
       asciinema
       tokei
-      loc
       cloc
       tree-sitter
-    ];
 
-    # Docker daemon
-    virtualisation.docker = {
-      enable = true;
-      enableOnBoot = true;
-      daemon.settings = {
-        features = { buildkit = true; };
-        registry-mirrors = [ "https://mirror.gcr.io" ];
-      };
-
-      autoPrune = {
-        enable = true;
-        dates = "weekly";
-        flags = [ "--all" ];
-      };
-    };
-
-    # Podman as Docker alternative
-    virtualisation.podman = {
-      enable = true;
-      dockerCompat = true;
-      defaultNetwork.settings.dns_enabled = true;
-    };
-
-    # Development services
-    services = {
-      # PostgreSQL
-      postgresql = {
-        enable = false; # Set to true to enable
-        package = pkgs.postgresql_15;
-        dataDir = "/var/lib/postgresql/15";
-        authentication = ''
-          local all all trust
-          host all all 127.0.0.1/32 trust
-          host all all ::1/128 trust
-        '';
-      };
-
-      # Redis
-      redis.servers."" = {
-        enable = false; # Set to true to enable
-        port = 6379;
-        bind = "127.0.0.1";
-      };
-
-      # MySQL/MariaDB
-      mysql = {
-        enable = false; # Set to true to enable
-        package = pkgs.mariadb;
-        settings = {
-          mysqld = {
-            bind-address = "127.0.0.1";
-            port = 3306;
-          };
-        };
-      };
-    };
-
-    # VSCode settings
-    environment.variables = {
-      # Enable VSCode to use Wayland
-      NIXOS_OZONE_WL = "1";
-    };
-
-    # Development shell environments
-    programs.direnv = {
-      enable = true;
-      nix-direnv.enable = true;
-    };
-
-    # Git configuration
-    programs.git = {
-      enable = true;
-      lfs.enable = true;
-      config = {
-        init.defaultBranch = "main";
-        core = {
-          editor = "nvim";
-          autocrlf = "input";
-        };
-        pull.rebase = false;
-        push.autoSetupRemote = true;
-      };
-    };
-
-    # Enable lorri for automatic nix-shell
-    services.lorri.enable = true;
-
-    # Add custom development scripts
-    environment.systemPackages = with pkgs; [
+      # Custom development scripts
       (writeShellScriptBin "dev-postgres" ''
         #!/usr/bin/env bash
         echo "Starting PostgreSQL development container..."
@@ -471,5 +382,93 @@ in
         echo "Run 'direnv allow' to activate the development environment"
       '')
     ];
+
+    # Docker daemon (only if containers feature is enabled)
+    virtualisation.docker = mkIf (omnixy.isEnabled "containers") {
+      enable = true;
+      enableOnBoot = true;
+      daemon.settings = {
+        features = { buildkit = true; };
+        registry-mirrors = [ "https://mirror.gcr.io" ];
+      };
+
+      autoPrune = {
+        enable = true;
+        dates = "weekly";
+        flags = [ "--all" ];
+      };
+    };
+
+    # Podman as Docker alternative (disabled dockerCompat to avoid conflict)
+    virtualisation.podman = {
+      enable = true;
+      dockerCompat = false;
+      defaultNetwork.settings.dns_enabled = true;
+    };
+
+    # Development services
+    services = {
+      # PostgreSQL
+      postgresql = {
+        enable = false; # Set to true to enable
+        package = pkgs.postgresql_15;
+        dataDir = "/var/lib/postgresql/15";
+        authentication = ''
+          local all all trust
+          host all all 127.0.0.1/32 trust
+          host all all ::1/128 trust
+        '';
+      };
+
+      # Redis
+      redis.servers."" = {
+        enable = false; # Set to true to enable
+        port = 6379;
+        bind = "127.0.0.1";
+      };
+
+      # MySQL/MariaDB
+      mysql = {
+        enable = false; # Set to true to enable
+        package = pkgs.mariadb;
+        settings = {
+          mysqld = {
+            bind-address = "127.0.0.1";
+            port = 3306;
+          };
+        };
+      };
+    };
+
+    # VSCode settings
+    environment.variables = {
+      # Enable VSCode to use Wayland
+      NIXOS_OZONE_WL = "1";
+    };
+
+    # Development shell environments
+    programs.direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+    };
+
+    # Git configuration
+    programs.git = {
+      enable = true;
+      lfs.enable = true;
+      config = {
+        init.defaultBranch = "main";
+        core = {
+          editor = "nvim";
+          autocrlf = "input";
+        };
+        pull.rebase = false;
+        push.autoSetupRemote = true;
+      };
+    };
+
+    # Enable lorri for automatic nix-shell
+    services.lorri.enable = true;
+
   };
 }

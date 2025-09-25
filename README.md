@@ -306,6 +306,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Theme configurations adapted from community themes and color schemes
 - [Nix Flakes](https://nixos.wiki/wiki/Flakes) - for reproducible and composable configurations
 
+## 🔗 Similar Projects
+
+- [Omarchy Nix](https://github.com/henrysipp/omarchy-nix) - Another NixOS implementation of DHH's Omarchy with automatic theme generation from wallpapers
+
 ## 🔗 Links
 
 - [NixOS Manual](https://nixos.org/manual/nixos/stable/) - Official NixOS documentation
