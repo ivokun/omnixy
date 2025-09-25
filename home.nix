@@ -28,7 +28,7 @@
     xplr
 
     # Development tools
-    neovim
+    # neovim (configured via programs.neovim)
     vscode
     lazygit
     gh

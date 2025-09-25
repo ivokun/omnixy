@@ -11,9 +11,26 @@ let
 in
 {
   config = mkIf (cfg.enable or true) {
-    # Add walker to system packages
-    environment.systemPackages = with pkgs; [
+    # Add walker and convenience scripts to system packages
+    environment.systemPackages = (with pkgs; [
       walker
+    ]) ++ [
+      # Convenience scripts
+      (omnixy.makeScript "omnixy-launcher" "Launch OmniXY app launcher" ''
+        walker --config ~/.config/walker/config.json --css ~/.config/walker/themes/style.css
+      '')
+
+      (omnixy.makeScript "omnixy-run" "Quick command runner" ''
+        walker --modules runner --config ~/.config/walker/config.json --css ~/.config/walker/themes/style.css
+      '')
+
+      (omnixy.makeScript "omnixy-apps" "Application launcher" ''
+        walker --modules applications --config ~/.config/walker/config.json --css ~/.config/walker/themes/style.css
+      '')
+
+      (omnixy.makeScript "omnixy-files" "File finder" ''
+        walker --modules finder --config ~/.config/walker/config.json --css ~/.config/walker/themes/style.css
+      '')
     ];
 
     # Create Walker configuration
@@ -368,7 +385,7 @@ in
     '';
 
     # Add to user environment
-    omnixy.forUser {
+    home-manager.users.${config.omnixy.user} = {
       # Set XDG config dir for Walker
       xdg.configFile."walker/config.json".source =
         config.environment.etc."omnixy/walker/config.json".source;
@@ -400,23 +417,6 @@ in
       };
     };
 
-    # Create convenience scripts
-    environment.systemPackages = [
-      (omnixy.makeScript "omnixy-launcher" "Launch OmniXY app launcher" ''
-        walker --config ~/.config/walker/config.json --css ~/.config/walker/themes/style.css
-      '')
-
-      (omnixy.makeScript "omnixy-run" "Quick command runner" ''
-        walker --modules runner --config ~/.config/walker/config.json --css ~/.config/walker/themes/style.css
-      '')
-
-      (omnixy.makeScript "omnixy-apps" "Application launcher" ''
-        walker --modules applications --config ~/.config/walker/config.json --css ~/.config/walker/themes/style.css
-      '')
-
-      (omnixy.makeScript "omnixy-files" "File finder" ''
-        walker --modules finder --config ~/.config/walker/config.json --css ~/.config/walker/themes/style.css
-      '')
-    ];
+    # Convenience scripts are now consolidated above
   };
 }

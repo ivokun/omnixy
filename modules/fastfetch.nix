@@ -11,9 +11,26 @@ let
 in
 {
   config = mkIf (cfg.enable or true) {
-    # Add fastfetch to system packages
-    environment.systemPackages = with pkgs; [
+    # Add fastfetch and convenience scripts to system packages
+    environment.systemPackages = (with pkgs; [
       fastfetch
+    ]) ++ [
+      # Convenience scripts
+      (omnixy.makeScript "omnixy-info" "Show OmniXY system information" ''
+        fastfetch --config /etc/omnixy/fastfetch/config.jsonc
+      '')
+
+      (omnixy.makeScript "omnixy-about" "Show OmniXY about screen" ''
+        clear
+        cat /etc/omnixy/branding/about.txt
+        echo
+        echo "Theme: ${cfg.theme}"
+        echo "Preset: ${cfg.preset or "custom"}"
+        echo "User: ${cfg.user}"
+        echo "NixOS Version: $(nixos-version)"
+        echo
+        echo "Visit: https://github.com/TheArctesian/omnixy"
+      '')
     ];
 
     # Create OmniXY branding directory
@@ -164,27 +181,10 @@ in
       }
     '';
 
-    # Create convenience script
-    environment.systemPackages = [
-      (omnixy.makeScript "omnixy-info" "Show OmniXY system information" ''
-        fastfetch --config /etc/omnixy/fastfetch/config.jsonc
-      '')
-
-      (omnixy.makeScript "omnixy-about" "Show OmniXY about screen" ''
-        clear
-        cat /etc/omnixy/branding/about.txt
-        echo
-        echo "Theme: ${cfg.theme}"
-        echo "Preset: ${cfg.preset or "custom"}"
-        echo "User: ${cfg.user}"
-        echo "NixOS Version: $(nixos-version)"
-        echo
-        echo "Visit: https://github.com/TheArctesian/omnixy"
-      '')
-    ];
+    # Convenience scripts are now consolidated above
 
     # Add to user environment
-    omnixy.forUser {
+    home-manager.users.${config.omnixy.user} = {
       # Set XDG config dir for fastfetch
       xdg.configFile."fastfetch/config.jsonc".source =
         config.environment.etc."omnixy/fastfetch/config.jsonc".source;

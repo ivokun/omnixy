@@ -19,7 +19,7 @@ in
       hub
 
       # Editors and IDEs
-      neovim
+      # neovim (configured via home-manager programs.neovim)
       vscode
       vim
       emacs

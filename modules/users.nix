@@ -55,7 +55,7 @@ in
   # security.pam.enableEcryptfs = true;
 
   # Automatic login (disable for production)
-  services.xserver.displayManager.autoLogin = {
+  services.displayManager.autoLogin = {
     enable = false;
     user = cfg.user;
   };

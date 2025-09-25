@@ -93,7 +93,7 @@
           packages = with pkgs; [
             # Development tools
             git
-            neovim
+            # neovim (configured via home-manager)
             ripgrep
             fd
             bat

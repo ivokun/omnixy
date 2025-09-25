@@ -127,7 +127,7 @@ in
       # Development packages
       ++ optionals cfg.packages.categories.development [
         # Editors and IDEs
-        neovim
+        # neovim (configured via home-manager programs.neovim)
         emacs
         vscode
         jetbrains.idea-community

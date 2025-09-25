@@ -25,8 +25,8 @@ with lib;
       nvtopPackages.nvidia
     ];
 
-    # OpenGL packages for NVIDIA
-    hardware.opengl.extraPackages = with pkgs; [
+    # Graphics packages for NVIDIA
+    hardware.graphics.extraPackages = with pkgs; [
       nvidia-vaapi-driver
       vaapiVdpau
       libvdpau-va-gl

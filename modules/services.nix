@@ -29,23 +29,29 @@ in
       enable = true;
 
       # Display Manager disabled - using greetd instead
-      displayManager.gdm.enable = false;
+      # (moved to services.displayManager.gdm.enable)
 
-      # Touchpad support
-      libinput = {
-        enable = true;
-        touchpad = {
-          naturalScrolling = true;
-          tapping = true;
-          clickMethod = "clickfinger";
-        };
-      };
+      # Touchpad support (moved to services.libinput)
+      # libinput configuration moved to services.libinput
 
       # Keyboard layout
       xkb = {
         layout = "us";
         variant = "";
         options = "caps:escape,compose:ralt";
+      };
+    };
+
+    # Display Manager (disabled - using greetd instead)
+    displayManager.gdm.enable = false;
+
+    # Touchpad support
+    libinput = {
+      enable = true;
+      touchpad = {
+        naturalScrolling = true;
+        tapping = true;
+        clickMethod = "clickfinger";
       };
     };
 

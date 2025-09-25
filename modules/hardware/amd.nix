@@ -18,14 +18,14 @@ with lib;
       nvtopPackages.amd
     ];
 
-    # OpenGL packages for AMD
-    hardware.opengl.extraPackages = with pkgs; [
+    # Graphics packages for AMD
+    hardware.graphics.extraPackages = with pkgs; [
       amdvlk
       rocm-opencl-icd
       rocm-opencl-runtime
     ];
 
-    hardware.opengl.extraPackages32 = with pkgs.pkgsi686Linux; [
+    hardware.graphics.extraPackages32 = with pkgs.pkgsi686Linux; [
       driversi686Linux.amdvlk
     ];
 

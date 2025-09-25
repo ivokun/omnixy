@@ -113,7 +113,7 @@ show_banner() {
 
     # Subtitle with typewriter effect
     printf "%*s" $(( (TERM_WIDTH - 40) / 2 )) ""
-    animate_text "🚀 Declarative • 🎨 Beautiful • ⚡ Fast" "$CYAN" 0.05
+    animate_text "Welcome to the linux world" "$CYAN" 0.05
     echo
     echo
 

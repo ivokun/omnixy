@@ -31,34 +31,62 @@ pkgs.stdenv.mkDerivation rec {
     set -e
 
     THEME="$1"
-    AVAILABLE_THEMES="tokyo-night catppuccin gruvbox nord everforest rose-pine kanagawa"
+    AVAILABLE_THEMES="tokyo-night catppuccin gruvbox nord everforest rose-pine kanagawa catppuccin-latte matte-black osaka-jade ristretto"
 
     if [ -z "$THEME" ]; then
-      echo "Usage: omnixy-theme-set <theme>"
-      echo "Available themes: $AVAILABLE_THEMES"
+      if [[ "''${OMNIXY_QUIET:-}" == "1" ]]; then
+        exit 1
+      fi
+      echo "Usage: omnixy theme set <theme>" >&2
+      echo "Available themes: $AVAILABLE_THEMES" >&2
       exit 1
     fi
 
     if ! echo "$AVAILABLE_THEMES" | grep -qw "$THEME"; then
-      echo "Error: Unknown theme '$THEME'"
-      echo "Available themes: $AVAILABLE_THEMES"
+      if [[ "''${OMNIXY_QUIET:-}" == "1" ]]; then
+        exit 1
+      fi
+      echo "Error: Unknown theme '$THEME'" >&2
+      echo "Available themes: $AVAILABLE_THEMES" >&2
       exit 1
     fi
-
-    echo "Switching to theme: $THEME"
 
     # Update configuration
     sudo sed -i "s/currentTheme = \".*\"/currentTheme = \"$THEME\"/" /etc/nixos/configuration.nix
 
-    # Rebuild system
-    sudo nixos-rebuild switch --flake /etc/nixos#omnixy
+    if [[ "''${OMNIXY_QUIET:-}" != "1" ]]; then
+      echo "Switching to theme: $THEME"
+    fi
 
-    echo "Theme switched to $THEME successfully!"
+    # Rebuild system
+    if [[ "''${OMNIXY_QUIET:-}" == "1" ]]; then
+      sudo nixos-rebuild switch --flake /etc/nixos#omnixy >/dev/null 2>&1
+    else
+      sudo nixos-rebuild switch --flake /etc/nixos#omnixy
+      echo "Theme switched to $THEME successfully!"
+    fi
     EOF
     chmod +x $out/bin/omnixy-theme-set
 
     cat > $out/bin/omnixy-theme-list << 'EOF'
     #!/usr/bin/env bash
+
+    THEMES="tokyo-night catppuccin gruvbox nord everforest rose-pine kanagawa catppuccin-latte matte-black osaka-jade ristretto"
+
+    if [[ "''${OMNIXY_QUIET:-}" == "1" ]]; then
+      echo "$THEMES" | tr ' ' '\n'
+      exit 0
+    fi
+
+    if [[ "''${OMNIXY_JSON:-}" == "1" ]]; then
+      current=$(grep currentTheme /etc/nixos/configuration.nix 2>/dev/null | cut -d'"' -f2 || echo "tokyo-night")
+      echo '{'
+      echo '  "available": ["'$(echo "$THEMES" | sed 's/ /", "/g')'"],'
+      echo '  "current": "'$current'"'
+      echo '}'
+      exit 0
+    fi
+
     echo "Available OmniXY themes:"
     echo "========================"
     echo "  • tokyo-night (default)"
@@ -68,38 +96,70 @@ pkgs.stdenv.mkDerivation rec {
     echo "  • everforest"
     echo "  • rose-pine"
     echo "  • kanagawa"
+    echo "  • catppuccin-latte"
+    echo "  • matte-black"
+    echo "  • osaka-jade"
+    echo "  • ristretto"
     echo ""
-    echo "Current theme: $(grep currentTheme /etc/nixos/configuration.nix | cut -d'"' -f2)"
+    echo "Current theme: $(grep currentTheme /etc/nixos/configuration.nix 2>/dev/null | cut -d'"' -f2 || echo "tokyo-night")"
     echo ""
-    echo "To change theme, run: omnixy-theme-set <theme-name>"
+    echo "To change theme, run: omnixy theme set <theme-name>"
     EOF
     chmod +x $out/bin/omnixy-theme-list
+
+    # Get current theme command
+    cat > $out/bin/omnixy-theme-get << 'EOF'
+    #!/usr/bin/env bash
+    current=$(grep currentTheme /etc/nixos/configuration.nix 2>/dev/null | cut -d'"' -f2 || echo "tokyo-night")
+
+    if [[ "''${OMNIXY_JSON:-}" == "1" ]]; then
+      echo '{"current": "'$current'"}'
+    else
+      echo "$current"
+    fi
+    EOF
+    chmod +x $out/bin/omnixy-theme-get
 
     # System management
     cat > $out/bin/omnixy-update << 'EOF'
     #!/usr/bin/env bash
     set -e
 
-    echo "🔄 Updating OmniXY system..."
-    echo ""
+    if [[ "''${OMNIXY_QUIET:-}" != "1" ]]; then
+      echo "🔄 Updating OmniXY system..."
+      echo ""
+    fi
 
     # Update flake inputs
-    echo "📦 Updating flake inputs..."
+    if [[ "''${OMNIXY_QUIET:-}" != "1" ]]; then
+      echo "📦 Updating flake inputs..."
+    fi
     cd /etc/nixos
-    sudo nix flake update
+    if [[ "''${OMNIXY_QUIET:-}" == "1" ]]; then
+      sudo nix flake update >/dev/null 2>&1
+    else
+      sudo nix flake update
+    fi
 
     # Show what changed
-    echo ""
-    echo "📊 Changes:"
-    git diff flake.lock | grep -E "^\+" | head -20
+    if [[ "''${OMNIXY_QUIET:-}" != "1" ]]; then
+      echo ""
+      echo "📊 Changes:"
+      git diff flake.lock | grep -E "^\+" | head -20
+    fi
 
     # Rebuild system
-    echo ""
-    echo "🏗️  Rebuilding system..."
-    sudo nixos-rebuild switch --flake .#omnixy
-
-    echo ""
-    echo "✅ System updated successfully!"
+    if [[ "''${OMNIXY_QUIET:-}" != "1" ]]; then
+      echo ""
+      echo "🏗️  Rebuilding system..."
+    fi
+    if [[ "''${OMNIXY_QUIET:-}" == "1" ]]; then
+      sudo nixos-rebuild switch --flake .#omnixy >/dev/null 2>&1
+    else
+      sudo nixos-rebuild switch --flake .#omnixy
+      echo ""
+      echo "✅ System updated successfully!"
+    fi
     EOF
     chmod +x $out/bin/omnixy-update
 
@@ -107,29 +167,44 @@ pkgs.stdenv.mkDerivation rec {
     #!/usr/bin/env bash
     set -e
 
-    echo "🧹 Cleaning OmniXY system..."
-    echo ""
+    if [[ "''${OMNIXY_QUIET:-}" != "1" ]]; then
+      echo "🧹 Cleaning OmniXY system..."
+      echo ""
 
-    # Show current store size
-    echo "Current store size:"
-    du -sh /nix/store 2>/dev/null || echo "Unable to calculate"
-    echo ""
+      # Show current store size
+      echo "Current store size:"
+      du -sh /nix/store 2>/dev/null || echo "Unable to calculate"
+      echo ""
+    fi
 
     # Run garbage collection
-    echo "Running garbage collection..."
-    sudo nix-collect-garbage -d
+    if [[ "''${OMNIXY_QUIET:-}" != "1" ]]; then
+      echo "Running garbage collection..."
+    fi
+    if [[ "''${OMNIXY_QUIET:-}" == "1" ]]; then
+      sudo nix-collect-garbage -d >/dev/null 2>&1
+    else
+      sudo nix-collect-garbage -d
+    fi
 
     # Optimize store
-    echo "Optimizing Nix store..."
-    sudo nix-store --optimise
+    if [[ "''${OMNIXY_QUIET:-}" != "1" ]]; then
+      echo "Optimizing Nix store..."
+    fi
+    if [[ "''${OMNIXY_QUIET:-}" == "1" ]]; then
+      sudo nix-store --optimise >/dev/null 2>&1
+    else
+      sudo nix-store --optimise
+    fi
 
-    # Show new size
-    echo ""
-    echo "New store size:"
-    du -sh /nix/store 2>/dev/null || echo "Unable to calculate"
-
-    echo ""
-    echo "✅ Cleanup complete!"
+    if [[ "''${OMNIXY_QUIET:-}" != "1" ]]; then
+      # Show new size
+      echo ""
+      echo "New store size:"
+      du -sh /nix/store 2>/dev/null || echo "Unable to calculate"
+      echo ""
+      echo "✅ Cleanup complete!"
+    fi
     EOF
     chmod +x $out/bin/omnixy-clean
 
@@ -251,31 +326,71 @@ pkgs.stdenv.mkDerivation rec {
     cat > $out/bin/omnixy-info << 'EOF'
     #!/usr/bin/env bash
 
+    # Gather data once
+    VERSION=$(nixos-version)
+    KERNEL=$(uname -r)
+    THEME=$(grep currentTheme /etc/nixos/configuration.nix 2>/dev/null | cut -d'"' -f2 || echo "tokyo-night")
+    CPU=$(lscpu | grep 'Model name' | cut -d':' -f2 | xargs)
+    MEMORY=$(free -h | awk '/^Mem:/ {print $2}')
+    DISK=$(df -h / | awk 'NR==2 {print $2}')
+
+    if [[ "''${OMNIXY_JSON:-}" == "1" ]]; then
+      echo "{"
+      echo "  \"system\": {"
+      echo "    \"version\": \"$VERSION\","
+      echo "    \"kernel\": \"$KERNEL\","
+      echo "    \"theme\": \"$THEME\","
+      echo "    \"user\": \"$USER\","
+      echo "    \"shell\": \"$SHELL\","
+      echo "    \"terminal\": \"$TERM\""
+      echo "  },"
+      echo "  \"hardware\": {"
+      echo "    \"cpu\": \"$CPU\","
+      echo "    \"memory\": \"$MEMORY\","
+      echo "    \"disk\": \"$DISK\""
+      echo "  }"
+      echo "}"
+      exit 0
+    fi
+
+    if [[ "''${OMNIXY_QUIET:-}" == "1" ]]; then
+      echo "version=$VERSION"
+      echo "kernel=$KERNEL"
+      echo "theme=$THEME"
+      echo "user=$USER"
+      echo "shell=$SHELL"
+      echo "terminal=$TERM"
+      echo "cpu=$CPU"
+      echo "memory=$MEMORY"
+      echo "disk=$DISK"
+      exit 0
+    fi
+
     echo "╭──────────────────────────────╮"
     echo "│       OMNIXY NIXOS           │"
     echo "╰──────────────────────────────╯"
     echo ""
     echo "System Information:"
     echo "==================="
-    echo "Version:     $(nixos-version)"
-    echo "Kernel:      $(uname -r)"
-    echo "Theme:       $(grep currentTheme /etc/nixos/configuration.nix 2>/dev/null | cut -d'"' -f2 || echo "default")"
+    echo "Version:     $VERSION"
+    echo "Kernel:      $KERNEL"
+    echo "Theme:       $THEME"
     echo "User:        $USER"
     echo "Shell:       $SHELL"
     echo "Terminal:    $TERM"
     echo ""
     echo "Hardware:"
     echo "========="
-    echo "CPU:         $(lscpu | grep 'Model name' | cut -d':' -f2 | xargs)"
-    echo "Memory:      $(free -h | awk '/^Mem:/ {print $2}')"
-    echo "Disk:        $(df -h / | awk 'NR==2 {print $2}')"
+    echo "CPU:         $CPU"
+    echo "Memory:      $MEMORY"
+    echo "Disk:        $DISK"
     echo ""
     echo "Quick Commands:"
     echo "=============="
-    echo "  omnixy-help     - Show help"
-    echo "  omnixy-update   - Update system"
-    echo "  omnixy-clean    - Clean system"
-    echo "  omnixy-theme    - Change theme"
+    echo "  omnixy help     - Show help"
+    echo "  omnixy update   - Update system"
+    echo "  omnixy clean    - Clean system"
+    echo "  omnixy theme    - List themes"
     EOF
     chmod +x $out/bin/omnixy-info
 
@@ -339,6 +454,27 @@ pkgs.stdenv.mkDerivation rec {
     cat > $out/bin/omnixy << 'EOF'
     #!/usr/bin/env bash
 
+    # Parse global flags
+    QUIET=false
+    JSON=false
+    while [[ $# -gt 0 ]]; do
+      case $1 in
+        --quiet|-q)
+          QUIET=true
+          export OMNIXY_QUIET=1
+          shift
+          ;;
+        --json)
+          JSON=true
+          export OMNIXY_JSON=1
+          shift
+          ;;
+        *)
+          break
+          ;;
+      esac
+    done
+
     CMD="''${1:-help}"
     shift || true
 
@@ -350,11 +486,25 @@ pkgs.stdenv.mkDerivation rec {
         omnixy-clean "$@"
         ;;
       theme)
-        if [ -n "$1" ]; then
-          omnixy-theme-set "$@"
-        else
-          omnixy-theme-list
-        fi
+        case "''${1:-}" in
+          set)
+            shift
+            omnixy-theme-set "$@"
+            ;;
+          list|ls)
+            omnixy-theme-list "$@"
+            ;;
+          get|current)
+            omnixy-theme-get "$@"
+            ;;
+          "")
+            omnixy-theme-list "$@"
+            ;;
+          *)
+            # Legacy: assume it's a theme name
+            omnixy-theme-set "$@"
+            ;;
+        esac
         ;;
       search)
         omnixy-search "$@"
@@ -369,8 +519,10 @@ pkgs.stdenv.mkDerivation rec {
         omnixy-help "$@"
         ;;
       *)
-        echo "Unknown command: $CMD"
-        echo "Run 'omnixy help' for available commands"
+        if [[ "$QUIET" == "false" ]]; then
+          echo "Unknown command: $CMD" >&2
+          echo "Run 'omnixy help' for available commands" >&2
+        fi
         exit 1
         ;;
     esac

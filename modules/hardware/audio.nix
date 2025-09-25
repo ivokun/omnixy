@@ -34,7 +34,7 @@ with lib;
     ];
 
     # Disable PulseAudio (conflicts with PipeWire)
-    hardware.pulseaudio.enable = false;
+    services.pulseaudio.enable = false;
 
     # Audio group for user
     users.groups.audio = {};

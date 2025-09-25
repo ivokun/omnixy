@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Unix-style config backup - does one thing well
+set -e
+
+backup_config() {
+    local backup_dir="${1:-}"
+    local timestamp=$(date +%Y%m%d-%H%M%S)
+
+    # Default backup location
+    if [[ -z "$backup_dir" ]]; then
+        backup_dir="/etc/nixos.backup.$timestamp"
+    fi
+
+    # Only backup if source exists
+    if [[ ! -d /etc/nixos ]]; then
+        [[ "${OMNIXY_QUIET:-}" != "1" ]] && echo "No existing configuration to backup"
+        exit 0
+    fi
+
+    # Create backup
+    sudo cp -r /etc/nixos "$backup_dir"
+
+    # Output backup location for piping/scripting
+    echo "$backup_dir"
+}
+
+main() {
+    case "${1:-}" in
+        --help|-h)
+            echo "Usage: omnixy-backup-config [backup-directory]"
+            echo "Backs up /etc/nixos to specified directory (or timestamped default)"
+            exit 0
+            ;;
+        *)
+            backup_config "$1"
+            ;;
+    esac
+}
+
+main "$@"

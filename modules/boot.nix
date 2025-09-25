@@ -42,6 +42,8 @@ in
         "boot.shell_on_fail"
         # Hide cursor
         "vt.global_cursor_default=0"
+        # Security: Disable emergency shell access
+        "systemd.debug-shell=0"
       ];
 
       # Console configuration for seamless experience
@@ -80,7 +82,6 @@ in
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        ExecStart = "${pkgs.plymouth}/bin/plymouth message --text='Welcome to OmniXY'";
         ExecStop = "${pkgs.plymouth}/bin/plymouth quit --retain-splash";
         TimeoutStartSec = "10s";
       };
@@ -234,16 +235,10 @@ in
       fontDir.enable = true;
     };
 
-    # Security: Disable debug shell during boot (can be enabled for troubleshooting)
-    boot.kernelParams = mkDefault [
-      # Disable emergency shell access
-      "systemd.debug-shell=0"
-    ];
+    # Security settings are now included in boot.kernelParams above
 
     # Optional: LUKS integration for encrypted systems
-    boot.initrd.luks.devices = mkIf (config.boot.initrd.luks.devices != {}) {
-      # Plymouth will automatically handle LUKS password prompts
-    };
+    # Plymouth will automatically handle LUKS password prompts when LUKS devices are configured
 
     # Console and TTY configuration
     console = {

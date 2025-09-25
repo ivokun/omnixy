@@ -21,15 +21,15 @@ with lib;
       nvtopPackages.intel
     ];
 
-    # OpenGL packages for Intel (already configured in default.nix)
-    hardware.opengl.extraPackages = with pkgs; [
+    # Graphics packages for Intel (already configured in default.nix)
+    hardware.graphics.extraPackages = with pkgs; [
       intel-media-driver
       vaapiIntel
       intel-compute-runtime
       intel-ocl
     ];
 
-    hardware.opengl.extraPackages32 = with pkgs.pkgsi686Linux; [
+    hardware.graphics.extraPackages32 = with pkgs.pkgsi686Linux; [
       vaapiIntel
     ];
 

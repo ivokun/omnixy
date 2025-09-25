@@ -7,7 +7,7 @@ with lib;
 
   config = mkIf config.hardware.touchpad.enable {
     # Touchpad support via libinput
-    services.xserver.libinput = {
+    services.libinput = {
       enable = true;
       touchpad = {
         tapping = true;

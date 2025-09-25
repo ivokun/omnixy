@@ -498,32 +498,32 @@ in
     ];
 
     # Shell aliases for easy access
-    omnixy.forUser {
+    home-manager.users.${config.omnixy.user} = {
       programs.bash.shellAliases = {
         menu = "omnixy-menu";
         themes = "omnixy-theme-picker";
-        rebuild = "omnixy-rebuild";
-        update = "omnixy-update";
+        rebuild = mkDefault "omnixy-rebuild";
+        update = mkDefault "omnixy-update";
         info = "omnixy-info";
-        clean = "omnixy-clean";
+        clean = mkDefault "omnixy-clean";
       };
 
       programs.zsh.shellAliases = {
         menu = "omnixy-menu";
         themes = "omnixy-theme-picker";
-        rebuild = "omnixy-rebuild";
-        update = "omnixy-update";
+        rebuild = mkDefault "omnixy-rebuild";
+        update = mkDefault "omnixy-update";
         info = "omnixy-info";
-        clean = "omnixy-clean";
+        clean = mkDefault "omnixy-clean";
       };
 
       programs.fish.shellAliases = {
         menu = "omnixy-menu";
         themes = "omnixy-theme-picker";
-        rebuild = "omnixy-rebuild";
-        update = "omnixy-update";
+        rebuild = mkDefault "omnixy-rebuild";
+        update = mkDefault "omnixy-update";
         info = "omnixy-info";
-        clean = "omnixy-clean";
+        clean = mkDefault "omnixy-clean";
       };
     };
   };
