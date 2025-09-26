@@ -407,7 +407,11 @@ configure_features() {
     echo
     if [[ $reply =~ ^[Yy]$ ]]; then
         center_text "${GREEN}✅ Fingerprint authentication enabled${RESET}"
-        sudo sed -i 's/fingerprint = {/fingerprint = {\n        enable = true;/' /etc/nixos/configuration.nix
+        local config_dir="/etc/nixos"
+        if [ "$INSTALL_MODE" = "fresh" ]; then
+            config_dir="/mnt/etc/nixos"
+        fi
+        sudo sed -i 's/fingerprint = {/fingerprint = {\n        enable = true;/' "$config_dir/configuration.nix"
     fi
 
     echo
@@ -417,7 +421,11 @@ configure_features() {
     echo
     if [[ $reply =~ ^[Yy]$ ]]; then
         center_text "${GREEN}✅ FIDO2 authentication enabled${RESET}"
-        sudo sed -i 's/fido2 = {/fido2 = {\n        enable = true;/' /etc/nixos/configuration.nix
+        local config_dir="/etc/nixos"
+        if [ "$INSTALL_MODE" = "fresh" ]; then
+            config_dir="/mnt/etc/nixos"
+        fi
+        sudo sed -i 's/fido2 = {/fido2 = {\n        enable = true;/' "$config_dir/configuration.nix"
     fi
 
     echo
