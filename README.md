@@ -1,17 +1,18 @@
 # OmniXY NixOS
 
-Transform your NixOS installation into a fully-configured, beautiful, and modern development system based on Hyprland by running a single command. OmniXY brings the elegance of declarative configuration to desktop Linux, creating a reproducible and version-controlled development environment.
+Transform your NixOS installation into a fully-configured, beautiful, and modern development system based on Hyprland. OmniXY brings the elegance of declarative configuration to desktop Linux, creating a reproducible and version-controlled development environment.
 
 ## ✨ Features
 
-- **🎨 Beautiful Themes**: Ships with carefully crafted themes (Tokyo Night, Catppuccin, and more) - all declaratively configured
-- **🚀 Modern Stack**: Hyprland compositor, Waybar, Alacritty, Neovim with LazyVim, all configured through Nix
+- **🎨 Beautiful Themes**: Ships with 11 carefully crafted themes (Tokyo Night, Catppuccin, Gruvbox, Nord, and more) - all declaratively configured
+- **🚀 Modern Stack**: Pure Wayland with Hyprland compositor, Waybar, Alacritty, Ghostty, Neovim with LazyVim
 - **📦 Declarative Everything**: Entire system configuration as code - reproducible across machines
 - **🛠️ Development Ready**: Pre-configured environments for Rust, Go, Python, Node.js, C/C++, and more via Nix shells
 - **🔄 Atomic Updates**: Rollback capability, no broken states, system-wide updates with one command
 - **🎯 Modular Design**: Feature flags for Docker, gaming, multimedia - enable only what you need
 - **⚡ Flake-based**: Modern Nix flakes for dependency management and reproducible builds
 - **🏠 Home Manager**: User environment managed declaratively alongside system configuration
+- **💿 ISO Builder**: Build custom live ISOs with your configuration
 
 ## 📋 Requirements
 
@@ -22,40 +23,39 @@ Transform your NixOS installation into a fully-configured, beautiful, and modern
 
 ## 🚀 Installation
 
-### Quick Install (Bootstrap on fresh NixOS)
+### Direct Flake Installation (Recommended)
+
+On an existing NixOS system:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/thearctesian/omnixy/main/boot.sh | bash
-```
-
-### Manual Installation
-
-1. Clone this repository:
-```bash
-git clone https://github.com/thearctesian/omnixy
-cd omnixy
-```
-
-2. Run the interactive installer:
-```bash
-./install.sh
-```
-
-3. The installer will:
-   - Backup your existing NixOS configuration
-   - Set up your username and home directory
-   - Let you choose a theme (Tokyo Night, Catppuccin, etc.)
-   - Configure optional features (Docker, gaming, multimedia)
-   - Build and switch to the new configuration
-
-### Advanced: Direct Flake Installation
-
-```bash
-# On existing NixOS system
+# Install directly from GitHub
 sudo nixos-rebuild switch --flake github:thearctesian/omnixy#omnixy
 
-# Or locally after cloning
+# Or clone and install locally
+git clone https://github.com/thearctesian/omnixy
+cd omnixy
 sudo nixos-rebuild switch --flake .#omnixy
+```
+
+### Building a Custom ISO
+
+Build a live ISO with the OmniXY configuration:
+
+```bash
+# Clone the repository
+git clone https://github.com/thearctesian/omnixy
+cd omnixy
+
+# Build the ISO (this will take time on first build)
+nix build .#iso
+
+# The ISO will be available at:
+ls -la result/iso/
+```
+
+Write the ISO to a USB drive:
+```bash
+sudo dd if=result/iso/nixos-*.iso of=/dev/sdX bs=4M status=progress
 ```
 
 ## 🎮 Usage
@@ -68,6 +68,7 @@ omnixy update            # Update system and flake inputs
 omnixy clean             # Clean and optimize Nix store
 omnixy info              # Show system information
 omnixy-rebuild           # Rebuild system configuration
+omnixy search <package>  # Search for packages
 ```
 
 ### Theme Management
@@ -75,8 +76,19 @@ omnixy-rebuild           # Rebuild system configuration
 ```bash
 omnixy theme             # List available themes
 omnixy theme tokyo-night # Switch to Tokyo Night theme
-omnixy-theme-list        # List all available themes
-omnixy-theme-set catppuccin  # Set Catppuccin theme
+
+# Available themes:
+# - tokyo-night (default)
+# - catppuccin
+# - catppuccin-latte
+# - gruvbox
+# - nord
+# - everforest
+# - rose-pine
+# - kanagawa
+# - matte-black
+# - osaka-jade
+# - ristretto
 ```
 
 ### Development Environments
@@ -87,16 +99,15 @@ nix develop               # Default development shell
 nix develop .#rust        # Rust development environment
 nix develop .#python      # Python development environment
 nix develop .#node        # Node.js development environment
+nix develop .#go          # Go development environment
+nix develop .#c           # C/C++ development environment
 
-# Create new projects with dev environments
-dev-project myapp rust    # Create Rust project with flake
-dev-project webapp node   # Create Node.js project with flake
-
-# Start development databases (Docker containers)
-dev-postgres              # PostgreSQL container
-dev-redis                 # Redis container
-dev-mysql                 # MySQL container
-dev-mongodb               # MongoDB container
+# Alternative: Use omnixy development shells
+omnixy-dev-shell rust    # Rust development shell
+omnixy-dev-shell python  # Python development shell
+omnixy-dev-shell go      # Go development shell
+omnixy-dev-shell js      # JavaScript/Node.js shell
+omnixy-dev-shell c       # C/C++ development shell
 ```
 
 ### Package Management
@@ -114,10 +125,10 @@ omnixy-rebuild           # Apply changes
 
 | Key Combination | Action |
 |-----------------|--------|
-| `Super + Return` | Open terminal |
-| `Super + B` | Open browser |
+| `Super + Return` | Open terminal (Ghostty) |
+| `Super + B` | Open browser (Firefox) |
 | `Super + E` | Open file manager |
-| `Super + D` | Application launcher |
+| `Super + D` | Application launcher (Walker) |
 | `Super + Q` | Close window |
 | `Super + F` | Fullscreen |
 | `Super + Space` | Toggle floating |
@@ -125,6 +136,7 @@ omnixy-rebuild           # Apply changes
 | `Super + Shift + 1-9` | Move window to workspace |
 | `Print` | Screenshot region |
 | `Shift + Print` | Screenshot full screen |
+| `Super + L` | Lock screen |
 
 ## 📁 Project Structure
 
@@ -134,31 +146,43 @@ omnixy/
 ├── flake.nix                  # Flake definition with inputs/outputs
 ├── home.nix                   # Home-manager user configuration
 ├── hardware-configuration.nix # Hardware-specific configuration (generated)
-├── install.sh                 # Interactive installer script
-├── boot.sh                    # Bootstrap script for fresh systems
+├── iso.nix                    # ISO image configuration
 ├── modules/                   # Modular NixOS configuration
-│   ├── core.nix              # Core Omarchy options and settings
+│   ├── core.nix              # Core OmniXY options and settings
 │   ├── packages.nix          # Categorized package collections
 │   ├── development.nix       # Development tools and environments
 │   ├── services.nix          # System services and daemons
 │   ├── users.nix             # User account management
+│   ├── boot.nix              # Boot configuration
+│   ├── security.nix          # Security settings
+│   ├── scripts.nix           # OmniXY utility scripts
+│   ├── menus.nix             # Application launchers
+│   ├── walker.nix            # Walker launcher configuration
+│   ├── fastfetch.nix         # System info display
 │   ├── desktop/
 │   │   └── hyprland.nix      # Hyprland compositor configuration
 │   ├── themes/               # Declarative theme system
 │   │   ├── tokyo-night.nix   # Tokyo Night theme
 │   │   ├── catppuccin.nix    # Catppuccin theme
+│   │   ├── gruvbox.nix       # Gruvbox theme
 │   │   └── ...               # Additional themes
 │   └── hardware/
-│       └── default.nix       # Hardware support and drivers
-└── packages/
-    └── scripts.nix           # Omarchy utility scripts as Nix packages
+│       ├── default.nix       # Common hardware support
+│       ├── nvidia.nix        # NVIDIA GPU support
+│       ├── amd.nix           # AMD GPU/CPU support
+│       ├── intel.nix         # Intel GPU/CPU support
+│       ├── audio.nix         # Audio configuration
+│       ├── bluetooth.nix     # Bluetooth support
+│       └── touchpad.nix      # Touchpad configuration
+└── packages/                  # Custom packages
+    └── scripts.nix           # OmniXY utility scripts as Nix packages
 ```
 
 ## 🏗️ Architecture
 
 ### Flake-based Configuration
 - **Pinned Dependencies**: All inputs locked for reproducibility
-- **Multiple Outputs**: NixOS config, development shells, packages, and apps
+- **Multiple Outputs**: NixOS configs, development shells, packages, apps, and ISO
 - **Home Manager Integration**: User environment managed alongside system
 
 ### Modular Design
@@ -167,22 +191,29 @@ omnixy/
 - **Hardware Support**: Automatic detection and configuration
 - **Development Environments**: Language-specific shells with all dependencies
 
-### Declarative Everything
-- **No Imperative Commands**: Everything defined in configuration files
-- **Version Controlled**: All changes tracked in git
-- **Rollback Support**: Previous generations available for recovery
-- **Atomic Updates**: System changes applied atomically
+### Pure Wayland
+- **No X11 Dependencies**: Full Wayland compositor stack
+- **Hyprland**: Dynamic tiling compositor with animations
+- **Native Wayland Apps**: Ghostty, Alacritty, Firefox with Wayland support
 
 ## 🎨 Themes
 
-Omarchy includes beautiful themes that configure your entire desktop environment:
+OmniXY includes beautiful themes that configure your entire desktop environment:
 
-- **Tokyo Night** (default) - A clean, dark theme inspired by Tokyo's night lights
-- **Catppuccin** - Soothing pastel theme with excellent contrast
-- More themes coming soon: **Gruvbox**, **Nord**, **Everforest**, **Rose Pine**, **Kanagawa**
+- **Tokyo Night** (default) - Clean, dark theme inspired by Tokyo's night lights
+- **Catppuccin** - Soothing pastel theme (Mocha variant)
+- **Catppuccin Latte** - Light variant of Catppuccin
+- **Gruvbox** - Retro groove color scheme
+- **Nord** - Arctic, north-bluish color palette
+- **Everforest** - Comfortable green color scheme
+- **Rose Pine** - Natural pine and rose colors
+- **Kanagawa** - Inspired by Japanese paintings
+- **Matte Black** - Pure black minimalist theme
+- **Osaka Jade** - Jade green accents
+- **Ristretto** - Coffee-inspired brown theme
 
 Each theme declaratively configures:
-- Terminal colors (Alacritty, Kitty)
+- Terminal colors (Ghostty, Alacritty, Kitty)
 - Editor themes (Neovim, VS Code)
 - Desktop environment (Hyprland, Waybar, Mako)
 - Applications (Firefox, BTtop, Lazygit)
@@ -192,41 +223,15 @@ Each theme declaratively configures:
 
 ### Adding System Packages
 
-Edit `modules/packages.nix` and add packages to the appropriate category:
+Edit `modules/packages.nix` and add packages to the appropriate category, then rebuild:
 
-```nix
-# In modules/packages.nix
-environment.systemPackages = with pkgs; [
-  # Add your packages here
-  firefox
-  vscode
-  discord
-] ++ optionals cfg.packages.categories.development [
-  # Development-specific packages
-  rustc
-  go
-  python3
-];
-```
-
-Then rebuild:
 ```bash
 omnixy-rebuild
 ```
 
 ### Adding User Packages
 
-Edit `home.nix` for user-specific packages:
-
-```nix
-# In home.nix
-home.packages = with pkgs; [
-  # User-specific packages
-  spotify
-  obs-studio
-  gimp
-];
-```
+Edit `home.nix` for user-specific packages and rebuild.
 
 ### Creating Custom Themes
 
@@ -236,35 +241,8 @@ cp modules/themes/tokyo-night.nix modules/themes/my-theme.nix
 ```
 
 2. Edit the color palette and application configurations
-3. Update `configuration.nix` to use your theme:
-```nix
-currentTheme = "my-theme";
-```
-
-4. Rebuild to apply:
-```bash
-omnixy-rebuild
-```
-
-### Creating Development Environments
-
-Add custom development shells to `flake.nix`:
-
-```nix
-devShells.${system}.myproject = pkgs.mkShell {
-  packages = with pkgs; [
-    nodejs_20
-    typescript
-    postgresql
-  ];
-
-  shellHook = ''
-    echo "Welcome to My Project development environment!"
-  '';
-};
-```
-
-Use with: `nix develop .#myproject`
+3. Add to `flake.nix` theme list
+4. Rebuild to apply
 
 ### Testing Changes
 
@@ -280,8 +258,27 @@ nixos-rebuild build-vm --flake .#omnixy
 nix flake check
 
 # Format Nix code
-nixpkgs-fmt *.nix **/*.nix
+nixpkgs-fmt *.nix modules/*.nix
 ```
+
+## 🚀 Building ISOs
+
+Build custom live ISOs with your configuration:
+
+```bash
+# Build ISO
+nix build .#iso
+
+# ISO location
+ls result/iso/nixos-*.iso
+```
+
+The ISO includes:
+- Full OmniXY desktop environment
+- Auto-login live session
+- Hyprland with selected theme
+- Development tools
+- Installation utilities
 
 ## 🤝 Contributing
 
@@ -305,10 +302,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Home Manager](https://github.com/nix-community/home-manager) - declarative user environment
 - Theme configurations adapted from community themes and color schemes
 - [Nix Flakes](https://nixos.wiki/wiki/Flakes) - for reproducible and composable configurations
-
-## 🔗 Similar Projects
-
-- [Omarchy Nix](https://github.com/henrysipp/omarchy-nix) - Another NixOS implementation of DHH's Omarchy with automatic theme generation from wallpapers
 
 ## 🔗 Links
 
