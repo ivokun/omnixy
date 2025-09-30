@@ -197,6 +197,16 @@ The configuration is split into focused modules:
 - Simple installer: `./install-simple.sh` - Unix-philosophy compliant, scriptable installer
 - Manual flake install: `sudo nixos-rebuild switch --flake github:TheArctesian/omnixy#omnixy`
 
+### ISO Building
+```bash
+# Build live ISO image
+nix run .#build-iso
+nix build .#iso         # Direct build
+
+# ISO features: Live desktop, installer, all themes, development tools
+# See BUILD_ISO.md for complete documentation
+```
+
 ### Unix Philosophy Tools (scripts/ directory)
 Focused, composable tools following "do one thing well":
 - `scripts/omnixy-check-system` - Just check system requirements

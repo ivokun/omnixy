@@ -85,6 +85,35 @@
             }
           ];
         };
+
+        # ISO configuration for live USB/DVD
+        omnixy-iso = nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = { inherit inputs; };
+          modules = [
+            ./iso.nix
+            home-manager.nixosModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                extraSpecialArgs = { inherit inputs; };
+                users = {
+                  nixos = { config, pkgs, lib, inputs, ... }: {
+                    imports = [ ./home.nix ];
+                    
+                    # Override the username and home directory for ISO
+                    home.username = lib.mkForce "nixos";
+                    home.homeDirectory = lib.mkForce "/home/nixos";
+                  };
+                };
+                sharedModules = [
+                  inputs.nix-colors.homeManagerModules.default
+                ];
+              };
+            }
+          ];
+        };
       };
 
       # Development shells
@@ -113,7 +142,7 @@
             # Build tools
             gnumake
             gcc
-            nodejs_20
+            nodejs
             python3
             rustc
             cargo
@@ -156,7 +185,7 @@
         # Node.js development
         node = pkgs.mkShell {
           packages = with pkgs; [
-            nodejs_20
+            nodejs
             nodePackages.npm
             nodePackages.pnpm
             nodePackages.yarn
@@ -183,8 +212,14 @@
         # OmniXY scripts as packages
         omnixy-scripts = pkgs.callPackage ./packages/scripts.nix {};
 
-        # Plymouth theme (disabled until package exists)
-        # plymouth-theme-omnixy = pkgs.callPackage ./packages/plymouth-theme.nix {};
+        # Plymouth theme package
+        plymouth-theme-omnixy = pkgs.callPackage ./packages/plymouth-theme.nix {};
+
+        # ISO image
+        iso = self.nixosConfigurations.omnixy-iso.config.system.build.isoImage;
+
+        # Default package points to ISO
+        default = self.packages.${system}.iso;
       };
 
       # Apps that can be run
@@ -236,6 +271,52 @@
             echo "✅ Installation complete!"
             echo "🎉 Welcome to OmniXY!"
           ''}/bin/omnixy-install";
+        };
+
+        # ISO builder
+        build-iso = {
+          type = "app";
+          program = "${pkgs.writeShellScriptBin "omnixy-build-iso" ''
+            #!/usr/bin/env bash
+            set -e
+
+            echo "🏗️ Building OmniXY ISO Image"
+            echo "============================"
+            echo ""
+
+            echo "📦 Building ISO image..."
+            echo "   This may take a while depending on your system..."
+            echo ""
+
+            # Build the ISO
+            nix build .#iso
+
+            # Check if build was successful
+            if [ -L "./result" ]; then
+              iso_path=$(readlink -f ./result)
+              iso_file=$(find "$iso_path" -name "*.iso" | head -1)
+              
+              if [ -n "$iso_file" ]; then
+                iso_size=$(du -h "$iso_file" | cut -f1)
+                echo ""
+                echo "✅ ISO build complete!"
+                echo "📁 Location: $iso_file"
+                echo "📏 Size: $iso_size"
+                echo ""
+                echo "🚀 You can now:"
+                echo "   • Flash to USB: dd if='$iso_file' of=/dev/sdX bs=4M status=progress"
+                echo "   • Burn to DVD: Use your favorite burning software"
+                echo "   • Test in VM: qemu-system-x86_64 -cdrom '$iso_file' -m 4G -enable-kvm"
+                echo ""
+              else
+                echo "❌ ISO file not found in build result"
+                exit 1
+              fi
+            else
+              echo "❌ Build failed - result symlink not found"
+              exit 1
+            fi
+          ''}/bin/omnixy-build-iso";
         };
       };
     };

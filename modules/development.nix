@@ -67,7 +67,7 @@ in
       ruff
 
       # Node.js
-      nodejs_20
+      nodejs
       nodePackages.npm
       nodePackages.pnpm
       nodePackages.yarn
@@ -247,7 +247,7 @@ in
             nix-shell -p python3 python3Packages.pip python3Packages.virtualenv
             ;;
           node)
-            nix-shell -p nodejs_20 nodePackages.npm nodePackages.pnpm
+            nix-shell -p nodejs nodePackages.npm nodePackages.pnpm
             ;;
           c|cpp)
             nix-shell -p gcc cmake gnumake gdb
@@ -344,7 +344,7 @@ in
             let pkgs = nixpkgs.legacyPackages.x86_64-linux;
             in {
               devShells.x86_64-linux.default = pkgs.mkShell {
-                packages = with pkgs; [ nodejs_20 nodePackages.pnpm ];
+                packages = with pkgs; [ nodejs nodePackages.pnpm ];
               };
             };
         }

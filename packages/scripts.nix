@@ -274,7 +274,7 @@ pkgs.stdenv.mkDerivation rec {
         ;;
       node|js)
         echo "Starting Node.js development shell..."
-        nix-shell -p nodejs_20 nodePackages.pnpm nodePackages.typescript
+        nix-shell -p nodejs nodePackages.pnpm nodePackages.typescript
         ;;
       c|cpp)
         echo "Starting C/C++ development shell..."

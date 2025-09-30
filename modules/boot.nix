@@ -10,7 +10,7 @@ let
   omnixy = import ./helpers.nix { inherit config pkgs lib; };
 
   # Import our custom Plymouth theme package
-  plymouth-themes = pkgs.callPackage ../packages/plymouth-theme.nix {};
+  plymouth-themes = (pkgs.callPackage ../packages/plymouth-theme.nix {}) or pkgs.plymouth;
 in
 {
   config = mkIf (cfg.enable or true) {

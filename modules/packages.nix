@@ -163,7 +163,7 @@ in
         cargo
         go
         python3
-        nodejs_20
+        nodejs
         deno
         bun
 
@@ -180,7 +180,7 @@ in
 
         # Database clients
         postgresql
-        mysql80
+        mysql
         sqlite
         redis
         mongodb-tools
@@ -222,7 +222,7 @@ in
         mpv
         vlc
         obs-studio
-        kdePackages.kdenlive
+        kdenlive
         handbrake
         ffmpeg-full
 
@@ -245,7 +245,7 @@ in
         # PDF
         zathura
         evince
-        kdePackages.okular
+        okular
         mupdf
       ]
 
@@ -264,7 +264,7 @@ in
         signal-desktop
         element-desktop
         zoom-us
-        # teams not available on x86_64-linux
+        teams
 
         # Office
         libreoffice
@@ -305,7 +305,7 @@ in
         lutris
         wine
         winetricks
-        proton-ge-bin
+        protonup-rs
         mangohud
         gamemode
         discord
