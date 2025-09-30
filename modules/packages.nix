@@ -264,7 +264,7 @@ in
         signal-desktop
         element-desktop
         zoom-us
-        teams
+        teams-for-linux
 
         # Office
         libreoffice
