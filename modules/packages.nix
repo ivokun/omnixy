@@ -222,7 +222,7 @@ in
         mpv
         vlc
         obs-studio
-        kdenlive
+        kdePackages.kdenlive
         handbrake
         ffmpeg-full
 
@@ -245,7 +245,7 @@ in
         # PDF
         zathura
         evince
-        okular
+        kdePackages.okular
         mupdf
       ]
 
