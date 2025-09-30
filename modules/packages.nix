@@ -180,7 +180,7 @@ in
 
         # Database clients
         postgresql
-        mysql
+        mariadb
         sqlite
         redis
         mongodb-tools

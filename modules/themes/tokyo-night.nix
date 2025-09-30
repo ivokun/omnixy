@@ -93,7 +93,7 @@ in
 
       # Kitty theme
       programs.kitty = {
-        theme = "Tokyo Night";
+        themeFile = "Tokyo Night";
         settings = {
           background = "#1a1b26";
           foreground = "#c0caf5";
@@ -275,16 +275,18 @@ in
 
       # Mako notification theme
       services.mako = {
-        backgroundColor = "#1a1b26";
-        textColor = "#c0caf5";
-        borderColor = "#7aa2f7";
-        progressColor = "#7aa2f7";
-        defaultTimeout = 5000;
-        borderRadius = 10;
-        borderSize = 2;
-        font = "JetBrainsMono Nerd Font 10";
-        padding = "10";
-        margin = "20";
+        settings = {
+          background-color = "#1a1b26";
+          text-color = "#c0caf5";
+          border-color = "#7aa2f7";
+          progress-color = "#7aa2f7";
+          default-timeout = 5000;
+          border-radius = 10;
+          border-size = 2;
+          font = "JetBrainsMono Nerd Font 10";
+          padding = "10";
+          margin = "20";
+        };
       };
     };
 
