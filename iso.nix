@@ -29,7 +29,6 @@
   # ISO-specific configuration
   isoImage = {
     # ISO image settings
-    image.fileName = "omnixy-${config.system.nixos.label}-${pkgs.stdenv.hostPlatform.system}.iso";
     volumeID = "OMNIXY_${lib.toUpper config.system.nixos.label}";
     
     # Boot configuration
@@ -68,6 +67,9 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+
+  # ISO image filename
+  image.fileName = "omnixy-${config.system.nixos.label}-${pkgs.stdenv.hostPlatform.system}.iso";
 
   # Enable flakes
   nix = {
