@@ -38,7 +38,7 @@
     # System monitoring
     btop
     htop
-    nvtop
+    nvtopPackages.full
 
     # Media
     mpv
