@@ -52,7 +52,8 @@ with lib;
       enable = true;
       extraBackends = with pkgs; [
         sane-airscan
-        epkowa
+        # epkowa removed due to iscan build issues
+        # Use epsonscan2 or imagescan for Epson scanner support instead
       ];
     };
 
