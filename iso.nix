@@ -348,9 +348,6 @@
       powerOnBoot = true;
     };
   };
-  
-  # Pulseaudio (disabled in favor of PipeWire)
-  services.pulseaudio.enable = false;
 
   # Boot configuration for ISO
   boot = {
