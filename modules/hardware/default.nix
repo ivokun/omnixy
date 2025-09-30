@@ -21,11 +21,11 @@ with lib;
     cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
     cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
-    # OpenGL/Graphics
-    opengl = {
+    # Graphics support
+    graphics = {
       enable = true;
 
-      # Common OpenGL packages
+      # Common graphics packages
       extraPackages = with pkgs; [
         intel-media-driver # Intel VAAPI
         vaapiIntel

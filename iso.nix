@@ -29,7 +29,7 @@
   # ISO-specific configuration
   isoImage = {
     # ISO image settings
-    isoName = "omnixy-${config.system.nixos.label}-${pkgs.stdenv.hostPlatform.system}.iso";
+    image.fileName = "omnixy-${config.system.nixos.label}-${pkgs.stdenv.hostPlatform.system}.iso";
     volumeID = "OMNIXY_${lib.toUpper config.system.nixos.label}";
     
     # Boot configuration
@@ -144,8 +144,14 @@
 
   # Live user configuration is handled by modules/users.nix
   # The nixos user will be created automatically since omnixy.user = "nixos"
-  # We just need to set an empty password for the live session
-  users.users.nixos.initialPassword = lib.mkForce ""; # Empty password for live session
+  # Remove any conflicting password settings
+  users.users.nixos = {
+    initialPassword = lib.mkForce ""; # Empty password for live session
+    password = lib.mkForce null;
+    hashedPassword = lib.mkForce null;
+    hashedPasswordFile = lib.mkForce null;
+    initialHashedPassword = lib.mkForce null;
+  };
 
   # Configure the user's environment to auto-start Hyprland
   environment.etc."profile.d/auto-hyprland.sh".text = ''
@@ -341,10 +347,10 @@
       enable = true;
       powerOnBoot = true;
     };
-    
-    # Pulseaudio (disabled in favor of PipeWire)
-    pulseaudio.enable = false;
   };
+  
+  # Pulseaudio (disabled in favor of PipeWire)
+  services.pulseaudio.enable = false;
 
   # Boot configuration for ISO
   boot = {

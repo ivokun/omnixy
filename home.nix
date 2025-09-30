@@ -275,7 +275,7 @@
   programs.vscode = {
     enable = true;
 
-    extensions = with pkgs.vscode-extensions; [
+    profiles.default.extensions = with pkgs.vscode-extensions; [
       # Themes
       pkief.material-icon-theme
       zhuangtongfa.material-theme
@@ -300,7 +300,7 @@
       jnoortheen.nix-ide
     ];
 
-    userSettings = {
+    profiles.default.userSettings = {
       "workbench.colorTheme" = lib.mkDefault "One Dark Pro";
       "workbench.iconTheme" = "material-icon-theme";
       "editor.fontFamily" = "'JetBrainsMono Nerd Font', monospace";
@@ -364,7 +364,7 @@
   programs.gpg.enable = true;
   services.gpg-agent = {
     enable = true;
-    pinentryPackage = pkgs.pinentry-gtk2;
+    pinentry.package = pkgs.pinentry-gtk2;
   };
 
   # XDG directories

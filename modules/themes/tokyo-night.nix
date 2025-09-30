@@ -139,7 +139,7 @@ in
       };
 
       # VS Code theme
-      programs.vscode.userSettings = {
+      programs.vscode.profiles.default.userSettings = {
         "workbench.colorTheme" = "Tokyo Night";
         "editor.tokenColorCustomizations" = {
           "[Tokyo Night]" = {
