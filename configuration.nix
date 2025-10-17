@@ -81,7 +81,7 @@ in
 
   # Networking
   networking = {
-    hostName = "omnixy";
+    hostName = "ivokun-nuc01";
     networkmanager.enable = true;
 
     # Firewall
@@ -92,7 +92,7 @@ in
   };
 
   # Timezone and locale
-  time.timeZone = "America/New_York";
+  time.timeZone = "Asia/Kuala_Lumpur";
   i18n = {
     defaultLocale = "en_US.UTF-8";
     extraLocaleSettings = {
@@ -144,7 +144,7 @@ in
   # Custom OmniXY settings
   omnixy = {
     enable = true;
-    user = "user"; # Change this to your username
+    user = "ivokun"; # Change this to your username
     theme = currentTheme;
     displayManager = "tuigreet";
 

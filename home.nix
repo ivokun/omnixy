@@ -2,8 +2,8 @@
 
 {
   # Home Manager needs a bit of information about you and the paths it should manage
-  home.username = "user"; # Change this to your username
-  home.homeDirectory = "/home/user"; # Change this to your home directory
+  home.username = "ivokun"; # Change this to your username
+  home.homeDirectory = "/home/ivokun"; # Change this to your home directory
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -96,8 +96,8 @@
   # Git configuration
   programs.git = {
     enable = true;
-    userName = "Your Name"; # Change this
-    userEmail = "your.email@example.com"; # Change this
+    userName = "Salahuddin Muhammad Iqbal"; # Change this
+    userEmail = "salahuddin.mi@gmail.com"; # Change this
 
     delta = {
       enable = true;

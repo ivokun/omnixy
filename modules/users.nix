@@ -27,6 +27,9 @@ in
 
     # SSH keys (add your SSH public keys here)
     openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINU//U61FclpfsPaIMNgBG3zhWeJNBiC/EIRMYeBx89a"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDGGZAQ+M111Mt5ii5fXs7DsPYn/iayDpmcBRhxpujvd"
+
       # "ssh-ed25519 AAAAC3... user@example.com"
     ];
   };

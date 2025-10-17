@@ -76,7 +76,7 @@
                 extraSpecialArgs = { inherit inputs; };
                 users = {
                   # Replace with your username
-                  user = import ./home.nix;
+                  ivokun = import ./home.nix;
                 };
                 sharedModules = [
                   inputs.nix-colors.homeManagerModules.default
