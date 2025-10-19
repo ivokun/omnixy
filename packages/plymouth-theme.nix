@@ -263,8 +263,8 @@ EOF
       ModuleName=script
 
       [script]
-      ImageDir=/run/current-system/sw/share/plymouth/themes/omnixy-${themeName}
-      ScriptFile=/run/current-system/sw/share/plymouth/themes/omnixy-${themeName}/omnixy-${themeName}.script
+      ImageDir=${plymouth-themes}/share/plymouth/themes/omnixy-${themeName}
+      ScriptFile=${plymouth-themes}/share/plymouth/themes/omnixy-${themeName}/omnixy-${themeName}.script
     '';
   };
 
