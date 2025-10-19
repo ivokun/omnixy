@@ -88,15 +88,28 @@ in
       };
 
       script = ''
-        # Ensure smooth transition from Plymouth to display manager
-        ${pkgs.coreutils}/bin/sleep 1
+        if ${pkgs.plymouth}/bin/plymouth --ping 2>/dev/null; then
+          # Ensure smooth transition from Plymouth to display manager
+          ${pkgs.coreutils}/bin/sleep 1
+          # Send welcome message
+          ${pkgs.plymouth}/bin/plymouth message --text="Loading OmniXY ${cfg.theme} theme... " || true
+          ${pkgs.coreutils}/bin/sleep 2
 
-        # Send welcome message
-        ${pkgs.plymouth}/bin/plymouth message --text="Loading OmniXY ${cfg.theme} theme..."
-        ${pkgs.coreutils}/bin/sleep 2
+          # Signal that boot is complete
+          ${pkgs.plymouth}/bin/plymouth message --text="System Ready" || true
+          # Ensure smooth transition from Plymouth to display manager
+          ${pkgs.coreutils}/bin/sleep 1
 
-        # Signal that boot is complete
-        ${pkgs.plymouth}/bin/plymouth message --text="System Ready"
+          # Send welcome message
+          ${pkgs.plymouth}/bin/plymouth message --text="Loading OmniXY ${cfg.theme} theme..."
+          ${pkgs.coreutils}/bin/sleep 2
+
+          # Signal that boot is complete
+          ${pkgs.plymouth}/bin/plymouth message --text="System Ready"
+        else
+          # Plymouth not running, skip gracefully
+          ${pkgs.coreutils}/bin/echo "Plymouth not active, skipping boot transition messages"
+        fi
       '';
     };
 
